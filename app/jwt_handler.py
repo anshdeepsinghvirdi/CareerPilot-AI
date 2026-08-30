@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
@@ -8,7 +11,12 @@ from sqlalchemy.orm import Session
 from .database import get_db
 from . import crud
 
-SECRET_KEY = "careerpilot_super_secret_key"
+load_dotenv()
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise Exception("JWT_SECRET_KEY is missing from environment variables")
 
 ALGORITHM = "HS256"
 
