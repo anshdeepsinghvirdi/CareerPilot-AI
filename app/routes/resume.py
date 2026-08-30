@@ -15,7 +15,21 @@ from ..ai import analyze_resume
 
 router = APIRouter(prefix="/resume", tags=["Resume"])
 
-UPLOAD_FOLDER = "app/uploads"
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+UPLOAD_FOLDER = os.path.join(
+    BASE_DIR,
+    "uploads"
+)
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 @router.post("/upload")
 def upload_resume(
@@ -23,6 +37,10 @@ def upload_resume(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(jwt_handler.get_current_user)
 ):
+    os.makedirs(
+        UPLOAD_FOLDER,
+        exist_ok=True
+    )
     
     if not file.filename.endswith((".pdf", ".docx")):
         return {"message": "only PDF and DOCX files are allowed"}
@@ -327,7 +345,10 @@ def download_analysis(
         )
 
     # Create reports folder
-    REPORT_FOLDER = "app/reports"
+    REPORT_FOLDER = os.path.join(
+        BASE_DIR,
+        "reports"
+    )
 
     os.makedirs(
         REPORT_FOLDER,
