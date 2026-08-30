@@ -16,3 +16,25 @@ venv/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+
+# Frontend build
+dist/
+frontend/dist/
+
+# Android / Gradle build files
+android/.gradle/
+android/build/
+android/app/build/
+
+# Android IDE files
+android/.idea/
+
+# User uploaded resumes
+app/uploads/
+
+# Generated reports
+app/reports/

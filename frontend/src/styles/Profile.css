@@ -1,0 +1,400 @@
+.profile-page {
+    min-height: 100vh;
+    padding:35px 6%;
+    color:white;
+}
+
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 40px;
+}
+
+.profile-header-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #60a5fa;
+    font-size: 28px;
+}
+
+.profile-eyebrow {
+    margin: 0 0 10px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #94a3b8;
+    letter-spacing: 1px;
+}
+
+.profile-header h1 {
+    margin: 0;
+
+    font-size: 52px;
+    font-weight: 800;
+
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #c4b5fd
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.profile-header p {
+    margin-top: 12px;
+
+    font-size: 20px;
+    color: #94a3b8;
+}
+
+.profile-card {
+    max-width: 1050px;
+    margin: 0 auto 30px;
+
+    padding: 32px;
+
+    border-radius: 22px;
+
+    background: rgba(15, 30, 60, 0.78);
+
+    border: 1px solid rgba(96, 165, 250, 0.2);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.profile-card h2 {
+    margin: 0 0 25px;
+
+    font-size: 26px;
+}
+
+.profile-field {
+    margin-bottom: 22px;
+}
+
+.profile-field label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: 0.8px;
+}
+
+.profile-field p,
+.profile-field input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: white;
+
+    font-size: 16px;
+}
+
+.profile-field p {
+    margin: 0;
+}
+
+.profile-field input {
+    outline: none;
+
+    transition: 0.25s ease;
+}
+
+.profile-field input:focus {
+    border-color: rgba(96, 165, 250, 0.6);
+
+    background: rgba(37, 99, 235, 0.08);
+
+    box-shadow:
+        0 0 20px rgba(37, 99, 235, 0.12);
+}
+
+.profile-field input::placeholder {
+    color: #64748b;
+}
+
+.profile-save-btn {
+    border: none;
+
+    padding: 15px 30px;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 30px rgba(79, 70, 229, 0.35);
+
+    transition: all 0.25s ease;
+}
+
+.profile-save-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 15px 35px rgba(79, 70, 229, 0.5);
+}
+
+.profile-save-btn:active {
+    transform: translateY(-1px);
+}
+
+.profile-field p {
+    background: rgba(255, 255, 255, 0.025);
+    color: #cbd5e1;
+    cursor: default;
+}
+
+.profile-field input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    color: white;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.25s ease;
+}
+
+.profile-field input:focus {
+    background: rgba(2, 8, 23, 0.85);
+    border-color: rgba(96, 165, 250, 0.65);
+
+    box-shadow:
+        0 0 20px rgba(37, 99, 235, 0.12);
+}
+
+.profile-notification {
+    position: fixed;
+
+    left: 30px;
+    bottom: 30px;
+
+    z-index: 10000;
+
+    min-width: 280px;
+
+    padding: 16px 20px;
+
+    border-radius: 14px;
+
+    background: rgba(15, 30, 60, 0.95);
+
+    border: 1px solid rgba(96, 165, 250, 0.35);
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35);
+
+    backdrop-filter: blur(12px);
+}
+
+.profile-notification.success {
+    border-color: rgba(74, 222, 128, 0.5);
+}
+
+.profile-notification.error {
+    border-color: rgba(248, 113, 113, 0.5);
+}
+
+/* =========================================================
+   PROFILE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .profile-page {
+        padding: 25px 20px;
+    }
+
+    .profile-header {
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .profile-header-icon {
+        width: 38px;
+        height: 38px;
+
+        font-size: 24px;
+
+        flex-shrink: 0;
+    }
+
+    .profile-eyebrow {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .profile-header h1 {
+        font-size: 38px;
+        line-height: 1.1;
+    }
+
+    .profile-header p {
+        margin-top: 8px;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .profile-card {
+        padding: 24px 20px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+    }
+
+    .profile-card h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .profile-field {
+        margin-bottom: 18px;
+    }
+
+    .profile-field label {
+        font-size: 13px;
+    }
+
+    .profile-field p,
+    .profile-field input {
+        padding: 13px 14px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .profile-save-btn {
+        width: 100%;
+
+        padding: 14px 20px;
+
+        font-size: 15px;
+
+        border-radius: 12px;
+    }
+
+    .profile-notification {
+        left: 15px;
+        right: 15px;
+        bottom: 20px;
+
+        min-width: auto;
+
+        text-align: center;
+
+        padding: 14px 16px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .profile-page {
+        padding: 20px 15px;
+    }
+
+    .profile-header {
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .profile-header-icon {
+        width: 34px;
+        height: 34px;
+
+        font-size: 21px;
+    }
+
+    .profile-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.7px;
+    }
+
+    .profile-header h1 {
+        font-size: 30px;
+    }
+
+    .profile-header p {
+        font-size: 14px;
+    }
+
+    .profile-card {
+        padding: 20px 15px;
+
+        border-radius: 16px;
+    }
+
+    .profile-card h2 {
+        font-size: 20px;
+    }
+
+    .profile-field p,
+    .profile-field input {
+        font-size: 14px;
+
+        padding: 12px;
+    }
+
+    .profile-save-btn {
+        font-size: 14px;
+
+        padding: 13px 18px;
+    }
+}
