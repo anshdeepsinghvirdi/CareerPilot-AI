@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 
 import AnimatedBackground from "../components/AnimatedBackground";
 import { requestNotificationPermission, sendCareerPilotReminder } from "../services/notification";
-import "../styles/settings.css";
+import "../styles/Settings.css";
 
 function Settings() {
     const navigate = useNavigate();
