@@ -13,7 +13,7 @@ import {
     FiBookOpen,
 } from "react-icons/fi";
 import AnimatedBackground from "../components/AnimatedBackground";
-import "../styles/dashboard.css";
+import "../styles/Dashboard.css";
 
 function ResumeHistory() {
 

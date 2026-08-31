@@ -19,7 +19,7 @@ import {
 import AnimatedBackground from "../components/AnimatedBackground";
 import API from "../services/api";
 
-import "../styles/dashboard.css";
+import "../styles/Dashboard.css";
 
 function Dashboard() {
 
