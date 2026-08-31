@@ -104,7 +104,7 @@ def forgot_password(
         token = jwt_handler.create_reset_token(user.email)
 
         reset_link = (
-            f"http://localhost:5173/reset-password/{token}"
+            f"https://your-frontend-url/reset-password/{token}"
         )
 
         send_reset_email(
