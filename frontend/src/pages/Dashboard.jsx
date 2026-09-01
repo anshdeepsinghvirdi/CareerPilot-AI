@@ -304,7 +304,7 @@ function Dashboard() {
                                     Beginner
                                 </span>
                                 <span>
-                                    AI Engineer 🎯
+                                    {dashboardData?.career_goal || "your target career"}
                                 </span>
                             </div>
                         </div>
