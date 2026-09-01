@@ -119,11 +119,14 @@ def forgot_password(
         }
 
     except Exception as e:
-        print("FORGOT PASSWORD EMAIL ERROR:", str(e))
+        print("\n========== FORGOT PASSWORD ERROR ==========")
+        print("Error type:", type(e).__name__)
+        print("Error message:", repr(e))
+        print("===========================================\n")
 
         raise HTTPException(
             status_code=500,
-            detail="Failed to send password reset email"
+            detail=f"Failed to send password reset email: {str(e)}"
         )
 
 @router.post("/reset-password")
