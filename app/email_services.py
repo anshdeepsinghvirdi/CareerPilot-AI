@@ -1,7 +1,9 @@
 import os
-import resend
+import smtplib
+
 from dotenv import load_dotenv
 from pathlib import Path
+from email.message import EmailMessage
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,88 +12,133 @@ ENV_FILE = BASE_DIR / ".env"
 load_dotenv(ENV_FILE)
 
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-
-resend.api_key = RESEND_API_KEY
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
 def send_reset_email(receiver_email: str, reset_link: str):
 
-    if not RESEND_API_KEY:
-        raise Exception("RESEND_API_KEY is missing")
+    if not EMAIL_ADDRESS:
+        raise Exception("EMAIL_ADDRESS is missing from environment variables")
 
+    if not EMAIL_PASSWORD:
+        raise Exception("EMAIL_PASSWORD is missing from environment variables")
 
-    params = {
-        "from": "CareerPilot AI <onboarding@resend.dev>",
-        "to": [receiver_email],
-        "subject": "CareerPilot AI - Reset Your Password",
-        "html": f"""
-        <div style="
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: auto;
-            padding: 30px;
-        ">
+    msg = EmailMessage()
 
-            <h1 style="color: #6C63FF;">
-                CareerPilot AI
-            </h1>
+    msg["Subject"] = "CareerPilot AI - Reset Your Password"
+    msg["From"] = f"CareerPilot AI <{EMAIL_ADDRESS}>"
+    msg["To"] = receiver_email
 
-            <h2>Reset Your Password</h2>
+    msg.set_content(
+        f"""
+Hello,
 
-            <p>Hello,</p>
+We received a request to reset your CareerPilot AI password.
 
-            <p>
-                We received a request to reset your CareerPilot AI password.
-            </p>
+Open the link below to reset your password:
 
-            <p>
-                Click the button below to reset your password:
-            </p>
+{reset_link}
 
-            <a href="{reset_link}"
-               style="
-                    display: inline-block;
-                    padding: 14px 24px;
-                    background-color: #6C63FF;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 8px;
-                    font-weight: bold;
-               ">
-                Reset Password
-            </a>
+This link is valid for 15 minutes.
 
-            <p style="margin-top: 25px;">
-                This link is valid for <b>15 minutes</b>.
-            </p>
+If you did not request a password reset, please ignore this email.
 
-            <p>
-                If you did not request this password reset, please ignore this email.
-            </p>
+Regards,
+CareerPilot AI Team
+"""
+    )
 
-            <br>
+    msg.add_alternative(
+        f"""
+        <html>
+            <body>
+                <div style="
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: auto;
+                    padding: 30px;
+                ">
 
-            <p>
-                Regards,<br>
-                <b>CareerPilot AI Team</b>
-            </p>
+                    <h1 style="color: #6C63FF;">
+                        CareerPilot AI
+                    </h1>
 
-        </div>
-        """
-    }
+                    <h2>Reset Your Password</h2>
 
+                    <p>Hello,</p>
+
+                    <p>
+                        We received a request to reset your CareerPilot AI password.
+                    </p>
+
+                    <p>
+                        Click the button below to reset your password:
+                    </p>
+
+                    <p style="margin: 30px 0;">
+                        <a href="{reset_link}"
+                           style="
+                                display: inline-block;
+                                padding: 14px 24px;
+                                background-color: #6C63FF;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 8px;
+                                font-weight: bold;
+                           ">
+                            Reset Password
+                        </a>
+                    </p>
+
+                    <p>
+                        This link is valid for <b>15 minutes</b>.
+                    </p>
+
+                    <p>
+                        If you did not request this password reset,
+                        please ignore this email.
+                    </p>
+
+                    <br>
+
+                    <p>
+                        Regards,<br>
+                        <b>CareerPilot AI Team</b>
+                    </p>
+
+                </div>
+            </body>
+        </html>
+        """,
+        subtype="html"
+    )
 
     try:
 
-        email = resend.Emails.send(params)
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
 
-        print("RESEND EMAIL SENT SUCCESSFULLY:", email)
+            server.starttls()
 
-        return email
+            server.login(
+                EMAIL_ADDRESS,
+                EMAIL_PASSWORD
+            )
+
+            server.send_message(msg)
+
+        print(
+            "PASSWORD RESET EMAIL SENT SUCCESSFULLY TO:",
+            receiver_email
+        )
+
+        return True
 
     except Exception as e:
 
-        print("RESEND EMAIL ERROR:", str(e))
+        print(
+            "GMAIL EMAIL ERROR:",
+            str(e)
+        )
 
         raise
