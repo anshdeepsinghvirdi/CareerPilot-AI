@@ -1,5 +1,6 @@
 import os
 import smtplib
+import socket
 
 from dotenv import load_dotenv
 from pathlib import Path
@@ -116,9 +117,26 @@ CareerPilot AI Team
 
     try:
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        # Get Gmail IPv4 address
+        gmail_info = socket.getaddrinfo(
+            "smtp.gmail.com",
+            587,
+            socket.AF_INET,
+            socket.SOCK_STREAM
+        )
+
+        gmail_ip = gmail_info[0][4][0]
+
+
+        with smtplib.SMTP(timeout=30) as server:
+
+            server.connect(gmail_ip, 587)
+
+            server.ehlo()
 
             server.starttls()
+
+            server.ehlo()
 
             server.login(
                 EMAIL_ADDRESS,
