@@ -97,73 +97,6 @@ function Roadmap() {
     };
 
     if (loading) {
-
-        if (requiresCareerGoal) {
-            return (
-                <>
-                    <AnimatedBackground />
-
-                    <div className="roadmap-page">
-
-                        <button
-                            className="back-btn"
-                            onClick={() => navigate(-1)}
-                            title="Go Back"
-                        >
-                            <FiArrowLeft />
-                        </button>
-
-                        <motion.div
-                            className="roadmap-container"
-                            initial={{
-                                opacity: 0,
-                                y: 30,
-                            }}
-                            animate={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                        >
-
-                            <div className="roadmap-title">
-
-                                <div>
-
-                                    <div className="roadmap-header-icon">
-                                        <FiMap />
-                                    </div>
-
-                                    <h2>
-                                        Set Your Career Goal First
-                                    </h2>
-
-                                    <p>
-                                        Please complete your profile and
-                                        select your career goal before
-                                        generating your personalized
-                                        AI career roadmap.
-                                    </p>
-
-                                    <button
-                                        className="complete-stage-btn"
-                                        onClick={() =>
-                                            navigate("/profile")
-                                        }
-                                    >
-                                        Set Career Goal
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </motion.div>
-
-                    </div>
-                </>
-            );
-        }
-
         return (
             <>
                 <AnimatedBackground />
@@ -178,6 +111,70 @@ function Roadmap() {
                     <p>
                         AI is preparing your career journey.
                     </p>
+                </div>
+            </>
+        );
+    }
+
+
+    if (requiresCareerGoal) {
+        return (
+            <>
+                <AnimatedBackground />
+
+                <div className="roadmap-page">
+
+                    <button
+                        className="back-btn"
+                        onClick={() => navigate(-1)}
+                        title="Go Back"
+                    >
+                        <FiArrowLeft />
+                    </button>
+
+                    <motion.div
+                        className="roadmap-container"
+                        initial={{
+                            opacity: 0,
+                            y: 30,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            y: 0,
+                        }}
+                    >
+                        <div className="roadmap-title">
+
+                            <div>
+
+                                <div className="roadmap-header-icon">
+                                    <FiMap />
+                                </div>
+
+                                <h2>
+                                    Set Your Career Goal First
+                                </h2>
+
+                                <p>
+                                    Please complete your profile and select
+                                    your career goal before generating your
+                                    personalized AI career roadmap.
+                                </p>
+
+                                <button
+                                    className="complete-stage-btn"
+                                    onClick={() =>
+                                        navigate("/profile")
+                                    }
+                                >
+                                    Set Career Goal
+                                </button>
+
+                            </div>
+
+                        </div>
+                    </motion.div>
+
                 </div>
             </>
         );
