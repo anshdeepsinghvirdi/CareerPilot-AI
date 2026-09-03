@@ -1,10 +1,7 @@
 import os
-import smtplib
-import socket
-
+import requests
 from dotenv import load_dotenv
 from pathlib import Path
-from email.message import EmailMessage
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,150 +10,113 @@ ENV_FILE = BASE_DIR / ".env"
 load_dotenv(ENV_FILE)
 
 
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
 def send_reset_email(receiver_email: str, reset_link: str):
 
+    if not BREVO_API_KEY:
+        raise Exception("BREVO_API_KEY is missing")
+
     if not EMAIL_ADDRESS:
-        raise Exception("EMAIL_ADDRESS is missing from environment variables")
+        raise Exception("EMAIL_ADDRESS is missing")
 
-    if not EMAIL_PASSWORD:
-        raise Exception("EMAIL_PASSWORD is missing from environment variables")
+    url = "https://api.brevo.com/v3/smtp/email"
 
-    msg = EmailMessage()
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json",
+    }
 
-    msg["Subject"] = "CareerPilot AI - Reset Your Password"
-    msg["From"] = f"CareerPilot AI <{EMAIL_ADDRESS}>"
-    msg["To"] = receiver_email
+    data = {
+        "sender": {
+            "name": "CareerPilot AI",
+            "email": EMAIL_ADDRESS,
+        },
+        "to": [
+            {
+                "email": receiver_email,
+            }
+        ],
+        "subject": "CareerPilot AI - Reset Your Password",
+        "htmlContent": f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+        ">
 
-    msg.set_content(
-        f"""
-Hello,
+            <h1 style="color: #6C63FF;">
+                CareerPilot AI
+            </h1>
 
-We received a request to reset your CareerPilot AI password.
+            <h2>Reset Your Password</h2>
 
-Open the link below to reset your password:
+            <p>Hello,</p>
 
-{reset_link}
+            <p>
+                We received a request to reset your CareerPilot AI password.
+            </p>
 
-This link is valid for 15 minutes.
+            <p>
+                Click the button below to reset your password:
+            </p>
 
-If you did not request a password reset, please ignore this email.
+            <a href="{reset_link}"
+               style="
+                    display: inline-block;
+                    padding: 14px 24px;
+                    background-color: #6C63FF;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+               ">
+                Reset Password
+            </a>
 
-Regards,
-CareerPilot AI Team
-"""
-    )
+            <p style="margin-top: 25px;">
+                This link is valid for <b>15 minutes</b>.
+            </p>
 
-    msg.add_alternative(
-        f"""
-        <html>
-            <body>
-                <div style="
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: auto;
-                    padding: 30px;
-                ">
+            <p>
+                If you did not request this password reset, please ignore this email.
+            </p>
 
-                    <h1 style="color: #6C63FF;">
-                        CareerPilot AI
-                    </h1>
+            <br>
 
-                    <h2>Reset Your Password</h2>
+            <p>
+                Regards,<br>
+                <b>CareerPilot AI Team</b>
+            </p>
 
-                    <p>Hello,</p>
-
-                    <p>
-                        We received a request to reset your CareerPilot AI password.
-                    </p>
-
-                    <p>
-                        Click the button below to reset your password:
-                    </p>
-
-                    <p style="margin: 30px 0;">
-                        <a href="{reset_link}"
-                           style="
-                                display: inline-block;
-                                padding: 14px 24px;
-                                background-color: #6C63FF;
-                                color: white;
-                                text-decoration: none;
-                                border-radius: 8px;
-                                font-weight: bold;
-                           ">
-                            Reset Password
-                        </a>
-                    </p>
-
-                    <p>
-                        This link is valid for <b>15 minutes</b>.
-                    </p>
-
-                    <p>
-                        If you did not request this password reset,
-                        please ignore this email.
-                    </p>
-
-                    <br>
-
-                    <p>
-                        Regards,<br>
-                        <b>CareerPilot AI Team</b>
-                    </p>
-
-                </div>
-            </body>
-        </html>
+        </div>
         """,
-        subtype="html"
-    )
+    }
 
     try:
 
-        # Get Gmail IPv4 address
-        gmail_info = socket.getaddrinfo(
-            "smtp.gmail.com",
-            587,
-            socket.AF_INET,
-            socket.SOCK_STREAM
+        response = requests.post(
+            url,
+            headers=headers,
+            json=data,
+            timeout=15,
         )
 
-        gmail_ip = gmail_info[0][4][0]
+        print("BREVO RESPONSE:", response.status_code)
+        print("BREVO RESPONSE BODY:", response.text)
 
+        response.raise_for_status()
 
-        with smtplib.SMTP(timeout=30) as server:
+        print("BREVO EMAIL SENT SUCCESSFULLY")
 
-            server.connect(gmail_ip, 587)
-
-            server.ehlo()
-
-            server.starttls()
-
-            server.ehlo()
-
-            server.login(
-                EMAIL_ADDRESS,
-                EMAIL_PASSWORD
-            )
-
-            server.send_message(msg)
-
-        print(
-            "PASSWORD RESET EMAIL SENT SUCCESSFULLY TO:",
-            receiver_email
-        )
-
-        return True
+        return response.json()
 
     except Exception as e:
 
-        print(
-            "GMAIL EMAIL ERROR:",
-            str(e)
-        )
+        print("BREVO EMAIL ERROR:", str(e))
 
         raise
