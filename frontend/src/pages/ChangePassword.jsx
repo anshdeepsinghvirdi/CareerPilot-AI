@@ -1,102 +1,118 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FiMail, FiArrowRight } from "react-icons/fi";
 import AnimatedBackground from "../components/AnimatedBackground";
-import API from "../services/api";
-import toast, { Toaster } from "react-hot-toast";
 import "../styles/login.css";
 
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import API from "../services/api";
+import toast, { Toaster } from "react-hot-toast";
+
+
 function ChangePassword() {
-    const [email, setEmail] = useState("");
 
-    const handleSendLink = async () => {
-        if (!email.trim()) {
-            toast.error("Please enter your email address.");
-            return;
-        }
+  const { token } = useParams();
+  const navigate = useNavigate();
 
-        try {
-            const response = await API.post("/forgot-password", {
-                email: email.trim(),
-            });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-            toast.success(
-                response.data.message || "Password reset link sent to your email."
-            );
 
-        } catch (error) {
-            console.log("FORGOT PASSWORD ERROR:", error);
+  const handleResetPassword = async () => {
 
-            const message =
-                error.response?.data?.detail ||
-                error.response?.data?.message ||
-                "Unable to send reset link.";
+    if (!password || !confirmPassword) {
+      toast.error("Please enter your new password");
+      return;
+    }
 
-            toast.error(message);
-        }
-    };
 
-    return (
-        <>
-            <AnimatedBackground />
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-            <Toaster position="top-right" />
 
-            <div className="login-page">
-                <motion.div
-                    className="login-card"
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="brand-logo-header">
-                        <img
-                            src="/careerpilot-mark.png"
-                            alt="CareerPilot AI"
-                            className="brand-logo-img"
-                        />
+    try {
 
-                        <div className="brand-logo-text">
-                            <span>CareerPilot AI</span>
-                        </div>
-                    </div>
+      await API.post("/reset-password", {
+        token: token,
+        new_password: password
+      });
 
-                    <h1>Forgot Password</h1>
 
-                    <p className="subtitle">
-                        Enter your registered email address.
-                        <br />
-                        We'll send you a password reset link.
-                    </p>
+      toast.success("Password updated successfully!");
 
-                    <div className="input-box">
-                        <FiMail />
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
 
-                        <input
-                            type="email"
-                            placeholder="Email Address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
 
-                    <button
-                        className="login-btn"
-                        onClick={handleSendLink}
-                    >
-                        Send Reset Link
-                        <FiArrowRight />
-                    </button>
+    } catch (error) {
 
-                    <div className="bottom-links">
-                        <Link to="/login">
-                            Back to Login
-                        </Link>
-                    </div>
-                </motion.div>
-            </div>
-        </>
-    );
+      console.error("RESET PASSWORD ERROR:", error.response?.data);
+
+      toast.error(
+        error.response?.data?.detail ||
+        "Invalid or expired reset link"
+      );
+    }
+  };
+
+
+  return (
+
+    <>
+      <AnimatedBackground />
+
+      <Toaster position="top-right" />
+
+      <div className="login-page">
+
+        <div className="login-card">
+
+          <h1>Reset Password</h1>
+
+          <p className="subtitle">
+            Create your new password
+          </p>
+
+
+          <div className="input-box">
+
+            <input
+              type="password"
+              placeholder="New Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+          </div>
+
+
+          <div className="input-box">
+
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
+          </div>
+
+
+          <button
+            className="login-btn"
+            onClick={handleResetPassword}
+          >
+            Update Password
+          </button>
+
+        </div>
+
+      </div>
+
+    </>
+  );
 }
+
 
 export default ChangePassword;
