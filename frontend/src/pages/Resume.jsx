@@ -12,6 +12,7 @@ import {
     FiBookOpen,
     FiTarget,
     FiLoader,
+    FiClock,
 } from "react-icons/fi";
 import API from "../services/api";
 import AnimatedBackground from "../components/AnimatedBackground";
@@ -96,27 +97,40 @@ function ResumeAnalyzer() {
 
                 <motion.div
                     className="resume-header"
-                    initial={{ opacity:0, y:20 }}
-                    animate={{ opacity:1, y:0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                 >
-                    <div className="resume-header-icon">
-                        <FiFileText />
+                    <div className="resume-header-content">
+
+                        <div className="resume-header-icon">
+                            <FiFileText />
+                        </div>
+
+                        <div className="resume-header-text">
+                            <p className="resume-eyebrow">
+                                AI POWERED ANALYSIS
+                            </p>
+
+                            <h1>
+                                Resume Analyzer
+                            </h1>
+
+                            <p>
+                                Let AI analyze your resume and discover
+                                how ready you are for your target career.
+                            </p>
+                        </div>
+
                     </div>
 
-                    <div>
-                        <p className="resume-eyebrow">
-                            AI POWERED ANALYSIS
-                        </p>
+                    <button
+                        className="resume-history-header-btn"
+                        onClick={() => navigate("/resume-history")}
+                    >
+                        <FiClock />
+                        <span>History</span>
+                    </button>
 
-                        <h1>
-                            Resume Analyzer
-                        </h1>
-
-                        <p>
-                            Let AI analyze your resume and discover
-                            how ready you are for your target career.
-                        </p>
-                    </div>
                 </motion.div>
 
                 <div className="resume-upload-box">

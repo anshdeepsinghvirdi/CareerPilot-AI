@@ -21,6 +21,7 @@ function Roadmap() {
     const [roadmap, setRoadmap] = useState("");
     const [loading, setLoading] = useState(true);
     const [completing, setCompleting] = useState(false);
+    const [requiresCareerGoal, setRequiresCareerGoal] = useState(false);
 
     useEffect(() => {
         fetchRoadmap();
@@ -38,6 +39,12 @@ function Roadmap() {
                     },
                 }
             );
+
+            if (res.data.requires_career_goal) {
+                setRequiresCareerGoal(true);
+                return;
+            }
+
 
             const roadmapData =
                 typeof res.data.roadmap === "string"
@@ -90,6 +97,73 @@ function Roadmap() {
     };
 
     if (loading) {
+
+        if (requiresCareerGoal) {
+            return (
+                <>
+                    <AnimatedBackground />
+
+                    <div className="roadmap-page">
+
+                        <button
+                            className="back-btn"
+                            onClick={() => navigate(-1)}
+                            title="Go Back"
+                        >
+                            <FiArrowLeft />
+                        </button>
+
+                        <motion.div
+                            className="roadmap-container"
+                            initial={{
+                                opacity: 0,
+                                y: 30,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                y: 0,
+                            }}
+                        >
+
+                            <div className="roadmap-title">
+
+                                <div>
+
+                                    <div className="roadmap-header-icon">
+                                        <FiMap />
+                                    </div>
+
+                                    <h2>
+                                        Set Your Career Goal First
+                                    </h2>
+
+                                    <p>
+                                        Please complete your profile and
+                                        select your career goal before
+                                        generating your personalized
+                                        AI career roadmap.
+                                    </p>
+
+                                    <button
+                                        className="complete-stage-btn"
+                                        onClick={() =>
+                                            navigate("/profile")
+                                        }
+                                    >
+                                        Set Career Goal
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </motion.div>
+
+                    </div>
+                </>
+            );
+        }
+
         return (
             <>
                 <AnimatedBackground />
@@ -183,8 +257,7 @@ function Roadmap() {
                         </span>
 
                         <h2>
-                            {roadmap?.career_goal ||
-                                "AI Engineer"}
+                            {roadmap?.career_goal}
                         </h2>
                     </div>
 

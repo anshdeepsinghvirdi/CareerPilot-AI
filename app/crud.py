@@ -90,6 +90,16 @@ def get_recommendations(db: Session, user):
 
 def generate_user_roadmap(user, db):
 
+    career_goal = user.career_goal
+
+    # Do not generate or show a roadmap until the user sets a career goal
+    if not career_goal or not career_goal.strip():
+
+        return {
+            "requires_career_goal": True,
+            "message": "Please set your career goal first"
+        }
+
     existing_roadmap = (
         db.query(models.Roadmap)
         .filter(
@@ -107,7 +117,6 @@ def generate_user_roadmap(user, db):
     else:
 
         skills = user.skills or ""
-        career_goal = user.career_goal or ""
 
         roadmap = ai.generate_career_roadmap(
             skills,
@@ -166,7 +175,7 @@ def generate_user_roadmap(user, db):
 
     return {
         "user": user.name,
-        "career_goal": user.career_goal or "",
+        "career_goal": career_goal,
         "roadmap": roadmap_data
     }
 
