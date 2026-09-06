@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 import {
     FiArrowLeft,
     FiMic,
@@ -26,14 +27,20 @@ function Interview() {
     const [questionNumber, setQuestionNumber] = useState(1);
     const [evaluating, setEvaluating] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    const [speechSupported, setSpeechSupported] = useState(true);
+    const [speechSupported] = useState(true);
 
     const roles = [
         "AI Engineer",
         "Machine Learning Engineer",
-        "Python Developer",
-        "Backend Developer",
-        "Data scientist",
+        "Software Developer",
+        "Mechanical Engineer",
+        "Electrical Engineer",
+        "Civil Engineer",
+        "Data Scientist",
+        "Web Developer",
+        "Business Analyst",
+        "Marketing Professional",
+        "Finance Professional",
     ];
 
     const startInterview = async () => {
@@ -62,52 +69,132 @@ function Interview() {
         }
     };
 
-    const startVoiceInput = () => {
-        const Speechrecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Voice input is not supported in this browser.");
-            return;
-        }
+    const startVoiceInput = async () => {
 
-        const recognition = new SpeechRecognition();
+        try {
 
-        recognition.lang = "en-US";
-        recognition.continuous = false;
-        recognition.interimResults = true;
+            let permission =
+                await SpeechRecognition.checkPermissions();
 
-        recognition.onstart = () => {
+            if (
+                permission.speechRecognition !== "granted"
+            ) {
+
+                permission =
+                    await SpeechRecognition.requestPermissions();
+
+            }
+
+            if (
+                permission.speechRecognition !== "granted"
+            ) {
+
+                alert(
+                    "Microphone permission is required."
+                );
+
+                return;
+
+            }
+
+            const available =
+                await SpeechRecognition.available();
+
+            if (!available.available) {
+
+                alert(
+                    "Speech recognition is not available on this device."
+                );
+
+                return;
+
+            }
+
             setIsListening(true);
+
+            await SpeechRecognition.removeAllListeners();
+
+
+            // Listen to spoken words
+            await SpeechRecognition.addListener(
+                "partialResults",
+                (data) => {
+
+                    if (
+                        data.matches &&
+                        data.matches.length > 0
+                    ) {
+
+                        const spokenText =
+                            data.matches[0];
+
+                        setAnswer(spokenText);
+
+                    }
+
+                }
+            );
+
+
+            // Android tells us recognition has stopped
+            await SpeechRecognition.addListener(
+                "listeningState",
+                (data) => {
+
+                    setIsListening(data.status === "started");
+
+                }
+            );
+
+
+            await SpeechRecognition.start({
+
+                language: "en-US",
+
+                maxResults: 1,
+
+                partialResults: true,
+
+                popup: false,
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Voice recognition error:",
+                error
+            );
+
+            setIsListening(false);
+
+            alert(
+                "Unable to start voice recognition."
+            );
+
         }
 
-        recognition.onresult = (event) => {
-            let finalTranscript = "";
+    };
 
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                }
-            }
+    const stopVoiceInput = async () => {
 
-            if (finalTranscript.trim()) {
-                setAnswer((prev) => {
-                    const newText = finalTranscript.trim();
+        try {
 
-                    return prev.trim()
-                        ? `${prev.trim()} ${newText}`
-                        : newText;
-                });
-            }
-        };
+            await SpeechRecognition.stop();
 
-        recognition.onerror = (event) => {
-            console.error("Speech recognition error:", event.error);
+        } catch (error) {
+
+            console.error(
+                "Error stopping speech recognition:",
+                error
+            );
+
+        } finally {
+
             setIsListening(false);
-        };
 
-        recognition.onend =() => {
-            setIsListening(false);
-        };
-        recognition.start();
+        }
+
     };
 
     const submitAnswer = async () => {
@@ -150,13 +237,6 @@ function Interview() {
             setEvaluating(false);
         }
     };
-
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            setSpeechSupported(false);
-        }
-    }, []);
 
     return (
         <>
@@ -295,7 +375,19 @@ function Interview() {
                                         className={`voice-input-btn ${
                                             isListening ? "listening" : ""
                                         }`}
-                                        onClick={startVoiceInput}
+                                        onClick={() => {
+
+                                            if (isListening) {
+
+                                                stopVoiceInput();
+
+                                            } else {
+
+                                                startVoiceInput();
+
+                                            }
+
+                                        }}
                                         title={
                                             isListening
                                                 ? "Listening..."

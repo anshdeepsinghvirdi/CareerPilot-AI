@@ -92,7 +92,7 @@ def generate_user_roadmap(user, db):
 
     career_goal = user.career_goal
 
-    # Do not generate or show a roadmap until the user sets a career goal
+    # Do not generate a roadmap until the user sets a career goal
     if not career_goal or not career_goal.strip():
 
         return {
@@ -103,15 +103,19 @@ def generate_user_roadmap(user, db):
     existing_roadmap = (
         db.query(models.Roadmap)
         .filter(
-            models.Roadmap.user_id == user.id
+            models.Roadmap.user_id == user.id,
+            models.Roadmap.career_goal == career_goal
         )
+        .order_by(models.Roadmap.id.desc())
         .first()
     )
 
     if existing_roadmap:
 
+        roadmap_record = existing_roadmap
+
         roadmap_data = json.loads(
-            existing_roadmap.roadmap
+            roadmap_record.roadmap
         )
 
     else:
@@ -123,27 +127,35 @@ def generate_user_roadmap(user, db):
             career_goal
         )
 
+        # Prevent saving an invalid roadmap
+        if not roadmap:
+            raise Exception(
+                "Failed to generate career roadmap"
+            )
+
         if isinstance(roadmap, str):
             roadmap_data = json.loads(roadmap)
         else:
             roadmap_data = roadmap
 
-        new_roadmap = models.Roadmap(
+        roadmap_record = models.Roadmap(
             user_id=user.id,
             career_goal=career_goal,
             roadmap=json.dumps(roadmap_data)
         )
 
-        db.add(new_roadmap)
+        db.add(roadmap_record)
         db.commit()
-        db.refresh(new_roadmap)
+        db.refresh(roadmap_record)
 
     stages = roadmap_data.get("stages", [])
 
+    # Get progress ONLY for this roadmap
     progress_records = (
         db.query(models.RoadmapProgress)
         .filter(
-            models.RoadmapProgress.user_id == user.id
+            models.RoadmapProgress.user_id == user.id,
+            models.RoadmapProgress.roadmap_id == roadmap_record.id
         )
         .all()
     )
