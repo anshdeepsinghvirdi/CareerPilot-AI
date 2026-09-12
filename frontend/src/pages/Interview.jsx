@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Capacitor } from "@capacitor/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
@@ -69,132 +70,280 @@ function Interview() {
         }
     };
 
+    const recognitionRef = useRef(null);
+    const isNativeRef = useRef(false);
+
     const startVoiceInput = async () => {
-
         try {
+            const platform = Capacitor.getPlatform();
 
-            let permission =
-                await SpeechRecognition.checkPermissions();
+            console.log("CareerPilot platform:", platform);
 
-            if (
-                permission.speechRecognition !== "granted"
-            ) {
+            // =====================================================
+            // 📱 ANDROID APP
+            // =====================================================
+            if (platform !== "web") {
 
-                permission =
-                    await SpeechRecognition.requestPermissions();
+                isNativeRef.current = true;
 
-            }
+                let permission =
+                    await SpeechRecognition.checkPermissions();
 
-            if (
-                permission.speechRecognition !== "granted"
-            ) {
+                if (
+                    permission.speechRecognition !== "granted"
+                ) {
+                    permission =
+                        await SpeechRecognition.requestPermissions();
+                }
 
-                alert(
-                    "Microphone permission is required."
-                );
+                if (
+                    permission.speechRecognition !== "granted"
+                ) {
+                    alert("Microphone permission is required.");
+                    return;
+                }
 
-                return;
+                const available =
+                    await SpeechRecognition.available();
 
-            }
+                if (!available.available) {
+                    alert(
+                        "Speech recognition is not available on this device."
+                    );
+                    return;
+                }
 
-            const available =
-                await SpeechRecognition.available();
+                setIsListening(true);
 
-            if (!available.available) {
+                await SpeechRecognition.removeAllListeners();
 
-                alert(
-                    "Speech recognition is not available on this device."
-                );
+                await SpeechRecognition.addListener(
+                    "partialResults",
+                    (data) => {
 
-                return;
-
-            }
-
-            setIsListening(true);
-
-            await SpeechRecognition.removeAllListeners();
-
-
-            // Listen to spoken words
-            await SpeechRecognition.addListener(
-                "partialResults",
-                (data) => {
-
-                    if (
-                        data.matches &&
-                        data.matches.length > 0
-                    ) {
-
-                        const spokenText =
-                            data.matches[0];
-
-                        setAnswer(spokenText);
-
+                        if (
+                            data.matches &&
+                            data.matches.length > 0
+                        ) {
+                            setAnswer(data.matches[0]);
+                        }
                     }
+                );
 
+                await SpeechRecognition.addListener(
+                    "listeningState",
+                    (data) => {
+                        setIsListening(
+                            data.status === "started"
+                        );
+                    }
+                );
+
+                await SpeechRecognition.start({
+                    language: "en-US",
+                    maxResults: 1,
+                    partialResults: true,
+                    popup: false,
+                });
+
+                return;
+            }
+
+
+            // =====================================================
+            // 💻 LAPTOP / WEB
+            // =====================================================
+
+            isNativeRef.current = false;
+
+            const BrowserSpeechRecognition =
+                window.SpeechRecognition ||
+                window.webkitSpeechRecognition;
+
+            if (!BrowserSpeechRecognition) {
+
+                alert(
+                    "Speech recognition is not supported in this browser. Please use Google Chrome."
+                );
+
+                return;
+            }
+
+
+            // Stop previous recognition
+            if (recognitionRef.current) {
+
+                try {
+                    recognitionRef.current.stop();
+                } catch (error) {
+                    console.log("Previous recognition stopped.");
                 }
+
+                recognitionRef.current = null;
+            }
+
+
+            const recognition =
+                new BrowserSpeechRecognition();
+
+            recognitionRef.current = recognition;
+
+            recognition.lang = "en-US";
+
+            // One speech session = one answer
+            recognition.continuous = false;
+
+            // Only final result
+            recognition.interimResults = false;
+
+            // Best result only
+            recognition.maxAlternatives = 1;
+
+
+            recognition.onstart = () => {
+
+                console.log(
+                    "🎤 CareerPilot web microphone started"
+                );
+
+                setIsListening(true);
+            };
+
+
+            recognition.onresult = (event) => {
+
+                console.log(
+                    "🎤 CareerPilot speech result:",
+                    event.results
+                );
+
+                if (
+                    event.results &&
+                    event.results.length > 0
+                ) {
+
+                    const transcript =
+                        event.results[0][0].transcript;
+
+                    console.log(
+                        "Recognized:",
+                        transcript
+                    );
+
+                    setAnswer(
+                        transcript.trim()
+                    );
+                }
+            };
+
+
+            recognition.onerror = (event) => {
+
+                console.error(
+                    "❌ CareerPilot web speech error:",
+                    event.error
+                );
+
+                setIsListening(false);
+
+                if (event.error === "not-allowed") {
+
+                    alert(
+                        "Chrome microphone permission was denied."
+                    );
+
+                } else if (event.error === "no-speech") {
+
+                    console.log("No speech detected.");
+
+                } else if (event.error === "audio-capture") {
+
+                    alert(
+                        "Chrome could not access your microphone."
+                    );
+
+                } else if (event.error === "network") {
+
+                    alert(
+                        "Speech recognition network error. Please check your internet connection."
+                    );
+
+                } else {
+
+                    alert(
+                        "Voice recognition error: " +
+                        event.error
+                    );
+                }
+            };
+
+
+            recognition.onend = () => {
+
+                console.log(
+                    "🎤 CareerPilot web microphone stopped"
+                );
+
+                setIsListening(false);
+
+                recognitionRef.current = null;
+            };
+
+
+            console.log(
+                "Starting Chrome speech recognition..."
             );
 
-
-            // Android tells us recognition has stopped
-            await SpeechRecognition.addListener(
-                "listeningState",
-                (data) => {
-
-                    setIsListening(data.status === "started");
-
-                }
-            );
-
-
-            await SpeechRecognition.start({
-
-                language: "en-US",
-
-                maxResults: 1,
-
-                partialResults: true,
-
-                popup: false,
-
-            });
+            recognition.start();
 
         } catch (error) {
 
             console.error(
-                "Voice recognition error:",
+                "❌ CareerPilot voice error:",
                 error
             );
 
             setIsListening(false);
 
             alert(
-                "Unable to start voice recognition."
+                "Unable to start voice recognition.\n\n" +
+                (error?.message || error)
             );
-
         }
-
     };
+
 
     const stopVoiceInput = async () => {
 
         try {
 
-            await SpeechRecognition.stop();
+            if (isNativeRef.current) {
+
+                // 📱 Android
+                await SpeechRecognition.stop();
+
+            } else {
+
+                // 💻 Laptop / Browser
+                if (recognitionRef.current) {
+
+                    recognitionRef.current.stop();
+
+                    recognitionRef.current = null;
+                }
+            }
 
         } catch (error) {
 
             console.error(
-                "Error stopping speech recognition:",
+                "Error stopping voice recognition:",
                 error
             );
 
         } finally {
 
             setIsListening(false);
-
         }
-
     };
 
     const submitAnswer = async () => {
