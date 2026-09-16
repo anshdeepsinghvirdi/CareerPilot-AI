@@ -13,6 +13,7 @@ import Interview from "./pages/Interview";
 import ChangePassword from "./pages/ChangePassword";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   useEffect(() => {
@@ -48,6 +49,8 @@ function App() {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       <Route path="/settings" element={<Settings />} />
+
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
     </Routes>
   );
