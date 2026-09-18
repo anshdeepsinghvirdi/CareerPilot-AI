@@ -77,6 +77,41 @@ def verify_reset_token(token: str):
     except JWTError:
         return None
 
+def create_delete_account_token(email: str):
+    expire = datetime.utcnow() + timedelta(
+        minutes=RESET_TOKEN_EXPIRE_MINUTES
+    )
+
+    payload = {
+        "sub": email,
+        "exp": expire,
+        "type": "delete_account"
+    }
+
+    return jwt.encode(
+        payload,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
+
+def verify_delete_account_token(token: str):
+
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        if payload.get("type") != "delete_account":
+            return None
+
+        return payload.get("sub")
+
+    except JWTError:
+        return None
+
 
 def get_current_user(
         token:  str = Depends(oauth2_scheme),

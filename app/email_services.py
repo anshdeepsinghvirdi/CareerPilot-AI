@@ -120,3 +120,114 @@ def send_reset_email(receiver_email: str, reset_link: str):
         print("BREVO EMAIL ERROR:", str(e))
 
         raise
+
+
+def send_delete_account_email(receiver_email: str, delete_link: str):
+
+    if not BREVO_API_KEY:
+        raise Exception("BREVO_API_KEY is missing")
+
+    if not EMAIL_ADDRESS:
+        raise Exception("EMAIL_ADDRESS is missing")
+
+    url = "https://api.brevo.com/v3/smtp/email"
+
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json",
+    }
+
+    data = {
+        "sender": {
+            "name": "CareerPilot AI",
+            "email": EMAIL_ADDRESS,
+        },
+        "to": [
+            {
+                "email": receiver_email,
+            }
+        ],
+        "subject": "CareerPilot AI - Confirm Account Deletion",
+        "htmlContent": f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            color: #222;
+        ">
+
+            <h1 style="color: #6C63FF;">
+                CareerPilot AI
+            </h1>
+
+            <h2>Confirm Account Deletion</h2>
+
+            <p>Hello,</p>
+
+            <p>
+                We received a request to delete your CareerPilot AI account.
+            </p>
+
+            <p>
+                If you made this request, click the button below to
+                permanently delete your account and associated data.
+            </p>
+
+            <a href="{delete_link}"
+               style="
+                    display: inline-block;
+                    padding: 14px 24px;
+                    background-color: #dc3545;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+               ">
+                Confirm Account Deletion
+            </a>
+
+            <p style="margin-top: 25px;">
+                This confirmation link is valid for <b>15 minutes</b>.
+            </p>
+
+            <p>
+                If you did not request account deletion, you can safely
+                ignore this email.
+            </p>
+
+            <br>
+
+            <p>
+                Regards,<br>
+                <b>CareerPilot AI Team</b>
+            </p>
+
+        </div>
+        """,
+    }
+
+    try:
+
+        response = requests.post(
+            url,
+            headers=headers,
+            json=data,
+            timeout=15,
+        )
+
+        print("BREVO DELETE EMAIL RESPONSE:", response.status_code)
+        print("BREVO DELETE EMAIL BODY:", response.text)
+
+        response.raise_for_status()
+
+        print("DELETE ACCOUNT EMAIL SENT SUCCESSFULLY")
+
+        return response.json()
+
+    except Exception as e:
+
+        print("BREVO DELETE EMAIL ERROR:", str(e))
+
+        raise
