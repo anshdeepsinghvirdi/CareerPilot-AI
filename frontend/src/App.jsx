@@ -14,6 +14,7 @@ import ChangePassword from "./pages/ChangePassword";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DeleteAccount from "./pages/DeleteAccount";
 
 function App() {
   useEffect(() => {
@@ -51,6 +52,8 @@ function App() {
       <Route path="/settings" element={<Settings />} />
 
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+      <Route path="/delete-account" element={<DeleteAccount />} />
 
     </Routes>
   );

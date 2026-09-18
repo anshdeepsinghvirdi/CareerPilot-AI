@@ -6,6 +6,7 @@ import {
     FiBell,
     FiShield,
     FiUser,
+    FiFileText,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
@@ -251,6 +252,29 @@ function Settings() {
                             <span className="settings-status">
                                 Protected
                             </span>
+
+                        </div>
+
+                        <div className="settings-item">
+
+                            <div className="settings-item-icon">
+                                <FiFileText />
+                            </div>
+
+                            <div className="settings-item-content">
+                                <h3>Privacy Policy</h3>
+
+                                <p>
+                                    Learn how CareerPilot collects, uses, and protects your information.
+                                </p>
+                            </div>
+
+                            <button
+                                className="settings-action-btn"
+                                onClick={() => navigate("/privacy-policy")}
+                            >
+                                View
+                            </button>
 
                         </div>
 
