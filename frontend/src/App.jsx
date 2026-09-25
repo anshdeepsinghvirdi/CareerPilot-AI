@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
+import { LocalNotifications } from "@capacitor/local-notifications";
+
 
 import {
   startCareerPilotReminders,
@@ -20,12 +22,60 @@ import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DeleteAccount from "./pages/DeleteAccount";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+
+  // -----------------------------------------
+  // NOTIFICATION TAP HANDLING
+  // -----------------------------------------
+  useEffect(() => {
+
+    let listener;
+
+    const setupNotificationTapListener = async () => {
+
+      listener = await LocalNotifications.addListener(
+        "localNotificationActionPerformed",
+        (action) => {
+
+          console.log(
+            "CareerPilot notification tapped:",
+            action
+          );
+
+          const token = localStorage.getItem("token");
+
+          if (!token) {
+            navigate("/login");
+            return;
+          }
+
+          const route =
+            action?.notification?.extra?.route || "/dashboard";
+
+          navigate(route);
+        }
+      );
+
+    };
+
+    setupNotificationTapListener();
+
+    return () => {
+
+      if (listener) {
+        listener.remove();
+      }
+
+    };
+
+  }, [navigate]);
 
 
   // -----------------------------------------
@@ -224,6 +274,11 @@ function App() {
       <Route
         path="/delete-account"
         element={<DeleteAccount />}
+      />
+
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
       />
 
     </Routes>

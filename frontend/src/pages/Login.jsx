@@ -175,7 +175,7 @@ function Login() {
 
                     <div className="bottom-links">
 
-                        <Link to="/change-password">
+                        <Link to="/forgot-password">
 
                             Forgot Password?
                                 

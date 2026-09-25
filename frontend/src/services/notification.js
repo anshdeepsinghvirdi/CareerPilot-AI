@@ -494,9 +494,8 @@ const scheduleAndroidReminders = async (
 
                         extra: {
 
-                            type:
-                                "roadmap-inactivity-reminder",
-
+                            type:"roadmap-inactivity-reminder",
+                            route: "/dashboard"
                         },
 
                     },
@@ -527,8 +526,8 @@ const scheduleAndroidReminders = async (
 
                         extra: {
 
-                            type:
-                                "app-inactivity-reminder",
+                            type:"app-inactivity-reminder",
+                            route: "/dashboard"
 
                         },
 
