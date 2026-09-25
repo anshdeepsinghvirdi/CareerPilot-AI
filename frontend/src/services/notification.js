@@ -9,13 +9,80 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 const ROADMAP_NOTIFICATION_ID = 1001;
 const APP_NOTIFICATION_ID = 1002;
 
+const NOTIFICATION_CHANNEL_ID = "careerpilot_reminders";
+
 
 /* =========================================
-   CHECK IF ANDROID APP
+   TEST MODE
+========================================= */
+
+/*
+   true  = 30 sec / 60 sec testing
+   false = 24 hours / 48 hours production
+*/
+
+const TEST_MODE = false;
+
+const ROADMAP_DELAY = TEST_MODE
+    ? 30 * 1000
+    : 24 * 60 * 60 * 1000;
+
+const APP_DELAY = TEST_MODE
+    ? 60 * 1000
+    : 48 * 60 * 60 * 1000;
+
+
+/* =========================================
+   CHECK ANDROID
 ========================================= */
 
 const isAndroidApp = () => {
     return Capacitor.getPlatform() === "android";
+};
+
+
+/* =========================================
+   CREATE ANDROID NOTIFICATION CHANNEL
+========================================= */
+
+const createAndroidNotificationChannel = async () => {
+
+    if (!isAndroidApp()) {
+        return;
+    }
+
+    try {
+
+        await LocalNotifications.createChannel({
+
+            id: NOTIFICATION_CHANNEL_ID,
+
+            name: "CareerPilot Reminders",
+
+            description:
+                "Reminders to continue your CareerPilot career journey.",
+
+            importance: 5,
+
+            visibility: 1,
+
+            sound: "default",
+
+            vibration: true,
+
+        });
+
+        console.log(
+            "CareerPilot notification channel created."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Failed to create notification channel:",
+            error
+        );
+    }
 };
 
 
@@ -26,7 +93,7 @@ const isAndroidApp = () => {
 export const requestNotificationPermission = async () => {
 
     /* ================================
-       ANDROID APP
+       ANDROID
     ================================ */
 
     if (isAndroidApp()) {
@@ -36,14 +103,34 @@ export const requestNotificationPermission = async () => {
             let permission =
                 await LocalNotifications.checkPermissions();
 
+            console.log(
+                "CareerPilot notification permission:",
+                permission
+            );
+
             if (permission.display === "granted") {
+
+                await createAndroidNotificationChannel();
+
                 return true;
             }
 
             permission =
                 await LocalNotifications.requestPermissions();
 
-            return permission.display === "granted";
+            console.log(
+                "CareerPilot notification permission after request:",
+                permission
+            );
+
+            if (permission.display === "granted") {
+
+                await createAndroidNotificationChannel();
+
+                return true;
+            }
+
+            return false;
 
         } catch (error) {
 
@@ -102,23 +189,17 @@ export const sendBrowserNotification = (
     options = {}
 ) => {
 
-    /* Don't use browser Notification API
-       inside Android APK */
-
     if (isAndroidApp()) {
         return;
     }
-
 
     if (!("Notification" in window)) {
         return;
     }
 
-
     if (Notification.permission !== "granted") {
         return;
     }
-
 
     new Notification(title, {
 
@@ -144,7 +225,6 @@ export const sendAndroidNotification = async (
         return;
     }
 
-
     try {
 
         const allowed =
@@ -154,27 +234,39 @@ export const sendAndroidNotification = async (
             return;
         }
 
-
         await LocalNotifications.schedule({
 
             notifications: [
 
                 {
                     id,
+
                     title,
+
                     body,
 
-                    schedule: {
-                        at: new Date(
-                            Date.now() + 1000
-                        ),
-                    },
+                    channelId:
+                        NOTIFICATION_CHANNEL_ID,
 
-                    sound: undefined,
+                    schedule: {
+
+                        at:
+                            new Date(
+                                Date.now() + 1000
+                            ),
+
+                        allowWhileIdle:
+                            true,
+
+                    },
 
                     extra: {
-                        type: "careerpilot"
+
+                        type:
+                            "careerpilot",
+
                     },
+
                 },
 
             ],
@@ -262,7 +354,47 @@ export const sendCareerPilotReminder = async () => {
 
 
 /* =========================================
-   SCHEDULE ANDROID REMINDERS
+   CANCEL EXISTING ANDROID REMINDERS
+========================================= */
+
+export const cancelAndroidReminders = async () => {
+
+    try {
+
+        await LocalNotifications.cancel({
+
+            notifications: [
+
+                {
+                    id:
+                        ROADMAP_NOTIFICATION_ID
+                },
+
+                {
+                    id:
+                        APP_NOTIFICATION_ID
+                }
+
+            ]
+
+        });
+
+        console.log(
+            "CareerPilot old inactivity reminders cancelled."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Failed to cancel old reminders:",
+            error
+        );
+    }
+};
+
+
+/* =========================================
+   SCHEDULE ANDROID INACTIVITY REMINDERS
 ========================================= */
 
 const scheduleAndroidReminders = async (
@@ -271,116 +403,165 @@ const scheduleAndroidReminders = async (
 
     try {
 
+        /* ================================
+           PERMISSION
+        ================================ */
+
         const allowed =
             await requestNotificationPermission();
 
         if (!allowed) {
+
+            console.log(
+                "CareerPilot notifications not allowed."
+            );
+
             return;
         }
 
 
         /* ================================
-           CANCEL OLD REMINDERS
+           CANCEL OLD TIMERS
         ================================ */
 
-        await LocalNotifications.cancel({
-
-            notifications: [
-
-                {
-                    id: ROADMAP_NOTIFICATION_ID
-                },
-
-                {
-                    id: APP_NOTIFICATION_ID
-                }
-
-            ]
-
-        });
+        await cancelAndroidReminders();
 
 
         /* ================================
-           ROADMAP — 24 HOURS
+           CALCULATE NEW INACTIVITY TIMES
         ================================ */
+
+        const now =
+            Date.now();
 
         const roadmapTime =
             new Date(
-                Date.now() +
-                24 * 60 * 60 * 1000
+                now + ROADMAP_DELAY
             );
-
-
-        /* ================================
-           APP — 48 HOURS
-        ================================ */
 
         const appTime =
             new Date(
-                Date.now() +
-                48 * 60 * 60 * 1000
+                now + APP_DELAY
             );
 
 
-        await LocalNotifications.schedule({
+        console.log(
+            "CareerPilot inactivity starting now."
+        );
 
-            notifications: [
+        console.log(
+            "Roadmap reminder:",
+            roadmapTime
+        );
 
-                {
-                    id: ROADMAP_NOTIFICATION_ID,
+        console.log(
+            "CareerPilot reminder:",
+            appTime
+        );
 
-                    title:
-                        "CareerPilot Roadmap",
 
-                    body:
-                        `Don't forget to continue "${currentStageTitle}". Keep moving toward your career goal.`,
+        /* ================================
+           SCHEDULE NATIVE ANDROID REMINDERS
+        ================================ */
 
-                    schedule: {
-                        at: roadmapTime,
+        const result =
+            await LocalNotifications.schedule({
 
-                        isExactNotification: false,
+                notifications: [
+
+                    {
+                        id:
+                            ROADMAP_NOTIFICATION_ID,
+
+                        title:
+                            "CareerPilot Roadmap",
+
+                        body:
+                            `Don't forget to continue "${currentStageTitle}". Keep moving toward your career goal.`,
+
+                        channelId:
+                            NOTIFICATION_CHANNEL_ID,
+
+                        schedule: {
+
+                            at:
+                                roadmapTime,
+
+                            allowWhileIdle:
+                                true,
+
+                        },
+
+                        extra: {
+
+                            type:
+                                "roadmap-inactivity-reminder",
+
+                        },
+
                     },
 
-                    extra: {
-                        type: "roadmap-reminder"
-                    }
-                },
 
+                    {
+                        id:
+                            APP_NOTIFICATION_ID,
 
-                {
-                    id: APP_NOTIFICATION_ID,
+                        title:
+                            "CareerPilot AI",
 
-                    title:
-                        "CareerPilot AI",
+                        body:
+                            "Your career journey is waiting. Come back to CareerPilot and continue learning.",
 
-                    body:
-                        "Your career journey is waiting. Come back to CareerPilot and continue learning.",
+                        channelId:
+                            NOTIFICATION_CHANNEL_ID,
 
-                    schedule: {
-                        at: appTime,
+                        schedule: {
 
-                        isExactNotification: false,
+                            at:
+                                appTime,
+
+                            allowWhileIdle:
+                                true,
+
+                        },
+
+                        extra: {
+
+                            type:
+                                "app-inactivity-reminder",
+
+                        },
+
                     },
 
-                    extra: {
-                        type: "app-reminder"
-                    }
-                }
+                ],
 
-            ]
-
-        });
+            });
 
 
         console.log(
-            "CareerPilot Android reminders scheduled."
+            "CareerPilot inactivity reminders scheduled:",
+            result
+        );
+
+
+        /* ================================
+           VERIFY NATIVE PENDING NOTIFICATIONS
+        ================================ */
+
+        const pending =
+            await LocalNotifications.getPending();
+
+        console.log(
+            "CareerPilot pending notifications:",
+            pending
         );
 
 
     } catch (error) {
 
         console.error(
-            "Failed to schedule Android reminders:",
+            "Failed to schedule Android inactivity reminders:",
             error
         );
     }
@@ -396,12 +577,21 @@ export const startCareerPilotReminders = async (
         "your current roadmap topic"
 ) => {
 
-
     /* =================================
        ANDROID
     ================================= */
 
     if (isAndroidApp()) {
+
+        /*
+           Every genuine app opening starts
+           a NEW inactivity period.
+
+           Android owns the timers after this.
+
+           30 sec / 60 sec in TEST_MODE.
+           24h / 48h in production.
+        */
 
         await scheduleAndroidReminders(
             currentStageTitle
@@ -423,7 +613,8 @@ export const startCareerPilotReminders = async (
     }
 
 
-    const now = Date.now();
+    const now =
+        Date.now();
 
 
     /* ================================

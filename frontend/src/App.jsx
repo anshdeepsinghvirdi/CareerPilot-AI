@@ -1,6 +1,11 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { startCareerPilotReminders } from "./services/notification.js";
+import { App as CapacitorApp } from "@capacitor/app";
+
+import {
+  startCareerPilotReminders,
+  cancelAndroidReminders,
+} from "./services/notification.js";
 
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
@@ -16,44 +21,210 @@ import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DeleteAccount from "./pages/DeleteAccount";
 
+
 function App() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
+  // -----------------------------------------
+  // ANDROID BACK BUTTON / GESTURE
+  // -----------------------------------------
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if(!token) return;
-    startCareerPilotReminders();
+
+    let listener;
+
+    const setupBackButton = async () => {
+
+      listener = await CapacitorApp.addListener(
+        "backButton",
+        ({ canGoBack }) => {
+
+          console.log(
+            "Android Back pressed:",
+            location.pathname,
+            "canGoBack:",
+            canGoBack
+          );
+
+          // Dashboard is the main/root screen of the app
+          if (location.pathname === "/dashboard") {
+
+            CapacitorApp.exitApp();
+
+            return;
+          }
+
+          // If there is a previous React page, go back
+          if (canGoBack) {
+
+            navigate(-1);
+
+            return;
+          }
+
+          // If there is no previous page,
+          // return to dashboard for logged-in users
+          const token = localStorage.getItem("token");
+
+          if (token) {
+            navigate("/dashboard", { replace: true });
+          } else {
+            navigate("/login", { replace: true });
+          }
+
+        }
+      );
+
+    };
+
+    setupBackButton();
+
+
+    return () => {
+
+      if (listener) {
+        listener.remove();
+      }
+
+    };
+
+  }, [navigate, location.pathname]);
+
+
+  // -----------------------------------------
+  // APP BACKGROUND / FOREGROUND
+  // NOTIFICATION LOGIC
+  // -----------------------------------------
+  useEffect(() => {
+
+    let listener;
+
+    const setupAppStateListener = async () => {
+
+      listener = await CapacitorApp.addListener(
+        "appStateChange",
+        async ({ isActive }) => {
+
+          const token = localStorage.getItem("token");
+
+          // User is not logged in
+          if (!token) {
+            console.log("No logged-in user - notification timer ignored");
+            return;
+          }
+
+          if (isActive) {
+
+            // User returned to CareerPilot
+            console.log(
+              "CareerPilot active - cancelling inactivity reminders"
+            );
+
+            await cancelAndroidReminders();
+
+          } else {
+
+            // User left CareerPilot
+            console.log(
+              "CareerPilot moved to background - starting inactivity timer"
+            );
+
+            await startCareerPilotReminders();
+
+          }
+
+        }
+      );
+
+    };
+
+    setupAppStateListener();
+
+    return () => {
+
+      if (listener) {
+        listener.remove();
+      }
+
+    };
 
   }, []);
+
 
   return (
     <Routes>
 
-      <Route path="/" element={<Navigate to="/login" />} />
+      <Route
+        path="/"
+        element={<Navigate to="/login" />}
+      />
 
-      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/signup"
+        element={<Signup />}
+      />
 
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-      <Route path="/change-password" element={<ChangePassword />} />
+      <Route
+        path="/change-password"
+        element={<ChangePassword />}
+      />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/dashboard"
+        element={<Dashboard />}
+      />
 
-      <Route path ="/profile" element={<Profile />} />
+      <Route
+        path="/profile"
+        element={<Profile />}
+      />
 
-      <Route path="/resume" element={<Resume />} />
+      <Route
+        path="/resume"
+        element={<Resume />}
+      />
 
-      <Route path="/resume-history" element={<ResumeHistory />} />
+      <Route
+        path="/resume-history"
+        element={<ResumeHistory />}
+      />
 
-      <Route path="/roadmap" element={<Roadmap />} />
+      <Route
+        path="/roadmap"
+        element={<Roadmap />}
+      />
 
-      <Route path="/interview" element={<Interview />} />
+      <Route
+        path="/interview"
+        element={<Interview />}
+      />
 
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route
+        path="/reset-password/:token"
+        element={<ResetPassword />}
+      />
 
-      <Route path="/settings" element={<Settings />} />
+      <Route
+        path="/settings"
+        element={<Settings />}
+      />
 
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route
+        path="/privacy-policy"
+        element={<PrivacyPolicy />}
+      />
 
-      <Route path="/delete-account" element={<DeleteAccount />} />
+      <Route
+        path="/delete-account"
+        element={<DeleteAccount />}
+      />
 
     </Routes>
   );
