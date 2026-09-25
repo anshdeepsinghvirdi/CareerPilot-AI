@@ -104,7 +104,7 @@ def forgot_password(
         token = jwt_handler.create_reset_token(user.email)
 
         reset_link = (
-             f"career-pilot-ai-ten-lovat.vercel.app/reset-password/{token}"
+             f"https://career-pilot-ai-ten-lovat.vercel.app/reset-password/{token}"
         )
 
         send_reset_email(
