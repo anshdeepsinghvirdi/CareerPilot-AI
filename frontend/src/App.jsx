@@ -24,7 +24,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import DeleteAccount from "./pages/DeleteAccount";
 import ForgotPassword from "./pages/ForgotPassword";
 
-
 function App() {
 
   const navigate = useNavigate();
@@ -222,6 +221,11 @@ function App() {
       />
 
       <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
+
+      <Route
         path="/change-password"
         element={<ChangePassword />}
       />
@@ -274,11 +278,6 @@ function App() {
       <Route
         path="/delete-account"
         element={<DeleteAccount />}
-      />
-
-      <Route
-        path="/forgot-password"
-        element={<ForgotPassword />}
       />
 
     </Routes>
