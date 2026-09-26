@@ -13,7 +13,6 @@ import {
     FiLogOut,
     FiArrowLeft,
     FiMenu,
-    FiX,
 } from "react-icons/fi";
 
 import AnimatedBackground from "../components/AnimatedBackground";
@@ -109,12 +108,6 @@ function Dashboard() {
                 ></div>
                 
                 <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
-                    <button
-                        className="sidebar-close-btn"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        <FiX />
-                    </button>
 
                     <div className="brand">
                         <div className="brand-logo">
@@ -139,11 +132,6 @@ function Dashboard() {
                         <a onClick={() => navigate("/resume")}>
                             <FiFileText />
                             Resume Analyzer
-                        </a>
-
-                        <a onClick={() => navigate("/resume-history")}>
-                            <FiFileText />
-                            Resume History
                         </a>
 
                         <a onClick={() => navigate("/roadmap")}>
