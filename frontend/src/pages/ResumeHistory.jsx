@@ -240,7 +240,7 @@ function ResumeHistory() {
 
                 <div className="dashboard-header">
 
-                    <div>
+                    <div className="resume-history-title-content">
 
                         <p className="welcome-small">
                             RESUME ANALYSIS
@@ -340,29 +340,16 @@ function ResumeHistory() {
                             return (
 
                                 <div
-                                    className="dashboard-card"
+                                    className="dashboard-card resume-history-card"
                                     key={resume.id}
                                 >
 
                                     {/* Resume Header */}
 
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            gap: "20px",
-                                            flexWrap: "wrap"
-                                        }}
-                                    >
+                                    <div className="resume-history-header">
+                                        
 
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: "15px"
-                                            }}
-                                        >
+                                        <div className="resume-history-title">
 
                                             <div
                                                 className="stat-icon blue"
@@ -396,12 +383,7 @@ function ResumeHistory() {
 
                                         {/* Score */}
 
-                                        <div
-                                            style={{
-                                                textAlign: "center",
-                                                minWidth: "100px"
-                                            }}
-                                        >
+                                        <div className="resume-history-score">
 
                                             <span
                                                 style={{
