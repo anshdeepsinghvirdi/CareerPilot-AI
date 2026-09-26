@@ -357,7 +357,7 @@ function ResumeHistory() {
                                                 <FiFileText />
                                             </div>
 
-                                            <div>
+                                            <div className="resume-history-title-content">
 
                                                 <h2
                                                     style={{

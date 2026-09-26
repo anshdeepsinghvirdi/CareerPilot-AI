@@ -436,34 +436,47 @@ function Dashboard() {
                             </div>
 
                             <div className="roadmap">
-                                {roadmap?.stages?.slice(0, 4).map((stage, index) => (
-                                    <div
-                                        key={index}
-                                        className={`roadmap-item ${stage.status}`}
-                                    >
-                                        <span className="roadmap-dot">
-                                            {stage.status === "completed"
-                                                ? "✓"
-                                                : index + 1
-                                            }
-                                        </span>
+                                {(() => {
+                                    const stages = roadmap?.stages || [];
 
-                                        <div>
-                                            <strong>
-                                                {stage.title}
-                                            </strong>
+                                    const currentIndex = stages.findIndex(
+                                        (stage) => stage.status === "current"
+                                    );
 
-                                            <p>
-                                                {stage.status === "completed"
-                                                    ? "Completed"
-                                                    : stage.status === "current"
-                                                        ? "Currently learning"
-                                                        : "Upcoming"
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    const startIndex =
+                                        currentIndex === -1
+                                            ? 0
+                                            : Math.max(currentIndex - 1, 0);
+
+                                    return stages
+                                        .slice(startIndex, startIndex + 4)
+                                        .map((stage, index) => (
+                                            <div
+                                                key={startIndex + index}
+                                                className={`roadmap-item ${stage.status}`}
+                                            >
+                                                <span className="roadmap-dot">
+                                                    {stage.status === "completed"
+                                                        ? "✓"
+                                                        : startIndex + index + 1}
+                                                </span>
+
+                                                <div>
+                                                    <strong>
+                                                        {stage.title}
+                                                    </strong>
+
+                                                    <p>
+                                                        {stage.status === "completed"
+                                                            ? "Completed"
+                                                            : stage.status === "current"
+                                                                ? "Currently learning"
+                                                                : "Upcoming"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ));
+                                })()}
                             </div>
                         </motion.div>
                     </div>

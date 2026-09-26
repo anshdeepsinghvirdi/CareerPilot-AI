@@ -671,34 +671,161 @@
     gap: 20px;
 }
 
-.resume-history-header-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* ============================= */
+/* RESUME HISTORY                */
+/* ============================= */
 
-    padding: 12px 18px;
-
-    border-radius: 12px;
-
-    border: 1px solid rgba(96, 165, 250, 0.4);
-
-    background: rgba(37, 99, 235, 0.15);
-
-    color: #93c5fd;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.25s ease;
-
-    white-space: nowrap;
+.resume-history-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-.resume-history-header-btn:hover {
-    background: rgba(37, 99, 235, 0.3);
-    transform: translateY(-2px);
+.resume-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    min-width: 0;
+}
+
+.resume-history-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+    max-width: calc(100% - 130px);
+}
+
+.resume-history-title-content {
+    min-width: 0;
+    max-width: 100%;
+    flex: 1;
+}
+
+.resume-history-title-content h2 {
+    margin: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.resume-history-title-content p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.resume-history-score {
+    flex-shrink: 0;
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Prevent long AI analysis content from creating horizontal overflow */
+
+.resume-history-card ul,
+.resume-history-card ol {
+    padding-left: 25px;
+    margin-right: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.resume-history-card li {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.resume-history-card * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+
+.resume-history-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* =========================================================
+   RESUME HISTORY - FILENAME WRAPPING FIX
+========================================================= */
+
+.resume-history-card .resume-history-header {
+    width: 100%;
+    min-width: 0;
+}
+
+.resume-history-card .resume-history-title {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.resume-history-card .resume-history-title-content {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.resume-history-card .resume-history-title-content h2 {
+    width: 100%;
+    max-width: 100%;
+
+    white-space: normal !important;
+    overflow: visible !important;
+
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+
+    line-height: 1.25;
+}
+
+
+.resume-history-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    max-width: 100%;
+}
+
+@media (max-width: 700px) {
+
+    .resume-history-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .resume-history-title {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .resume-history-score {
+        align-self: flex-start;
+    }
+
+    .resume-history-actions {
+        flex-direction: column;
+    }
+
+    .resume-history-btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 600px) {
