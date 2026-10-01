@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {Capacitor } from "@capacitor/core";
+import { Filesystem, Directory } from "@capacitor/filesystem";
+import { Share } from "@capacitor/share";
 import API from "../services/api";
 import {
     FiArrowLeft,
@@ -112,9 +115,7 @@ function ResumeHistory() {
     };
 
     const downloadAnalysis = async (id) => {
-
         try {
-
             const token = localStorage.getItem("token");
 
             const response = await API.get(
@@ -127,11 +128,47 @@ function ResumeHistory() {
                 }
             );
 
+            // Android / Capacitor
+            if (Capacitor.isNativePlatform()) {
+
+                const blob = response.data;
+
+                const base64Data = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onloadend = () => {
+                        const result = reader.result;
+                        resolve(result.split(",")[1]);
+                    };
+
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+
+                const fileName = `CareerPilot_AI_Report_${id}.pdf`;
+
+                const savedFile = await Filesystem.writeFile({
+                    path: fileName,
+                    data: base64Data,
+                    directory: Directory.Cache,
+                });
+
+                await Share.share({
+                    title: "CareerPilot AI Resume Analysis",
+                    text: "CareerPilot AI Resume Analysis Report",
+                    url: savedFile.uri,
+                    dialogTitle: "Save or Share Report",
+                });
+
+                return;
+            }
+
+            // PC / Browser
             const url = window.URL.createObjectURL(
                 new Blob(
                     [response.data],
                     {
-                        type: "application/pdf"
+                        type: "application/pdf",
                     }
                 )
             );
@@ -139,23 +176,17 @@ function ResumeHistory() {
             const link = document.createElement("a");
 
             link.href = url;
-
             link.download = "CareerPilot_AI_Report.pdf";
 
             document.body.appendChild(link);
-
             link.click();
-
             link.remove();
 
             window.URL.revokeObjectURL(url);
 
         } catch (error) {
-
-            console.log(error);
-
+            console.log("DOWNLOAD ANALYSIS ERROR:", error);
             alert("Failed to download analysis.");
-
         }
     };
 
