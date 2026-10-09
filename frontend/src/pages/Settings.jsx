@@ -7,15 +7,21 @@ import {
     FiShield,
     FiUser,
     FiFileText,
+    FiGlobe,
+    FiCheck,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 import AnimatedBackground from "../components/AnimatedBackground";
 import { requestNotificationPermission, sendCareerPilotReminder } from "../services/notification";
+import { useLanguage } from "../context/LanguageContext";
 import "../styles/Settings.css";
 
 function Settings() {
+    const { language, setLanguage } = useLanguage();
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const th = t.settings;
 
     const [careerUpdates, setCareerUpdates] = useState(
         localStorage.getItem("careerUpdates") !== "false"
@@ -65,7 +71,7 @@ function Settings() {
                 <button
                     className="settings-back-btn"
                     onClick={() => navigate(-1)}
-                    title="Go Back"
+                    title={th.goBack}
                 >
                     <FiArrowLeft />
                 </button>
@@ -81,14 +87,13 @@ function Settings() {
 
                     <div>
                         <p className="settings-eyebrow">
-                            CAREERPILOT PREFERENCES
+                            {th.eyebrow}
                         </p>
 
-                        <h1>Settings</h1>
+                        <h1>{th.title}</h1>
 
                         <p>
-                            Customize your CareerPilot experience
-                            according to your preferences.
+                            {th.subtitle}
                         </p>
                     </div>
                 </motion.div>
@@ -100,6 +105,43 @@ function Settings() {
                     transition={{ delay: 0.15 }}
                 >
 
+                    
+                    {/* LANGUAGE PREFERENCES */}
+
+                    <div className="settings-section">
+                        <div className="settings-section-title">
+                            <FiGlobe />
+
+                            <div>
+                                <h2>{th.languageTitle}</h2>
+                                <p>{th.languageDescription}</p>
+                            </div>
+                        </div>
+
+                        <div className="settings-item">
+                            <div className="settings-item-icon">
+                                <FiGlobe />
+                            </div>
+
+                            <div className="settings-item-content">
+                                <h3>{th.appLanguage}</h3>
+                                <p>{th.languageHint}</p>
+                            </div>
+
+                            <select
+                                className="settings-language-select"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                aria-label={th.appLanguage}
+                            >
+                                <option value="en">English</option>
+                                <option value="hi">हिन्दी</option>
+                                <option value="mr">मराठी</option>
+                            </select>
+                        </div>
+                    </div>
+
+
                     {/* ACCOUNT */}
 
                     <div className="settings-section">
@@ -108,9 +150,9 @@ function Settings() {
                             <FiUser />
 
                             <div>
-                                <h2>Account Preferences</h2>
+                                <h2>{th.accountPreferences}</h2>
                                 <p>
-                                    Manage your personal CareerPilot preferences.
+                                    {th.accountDescription}
                                 </p>
                             </div>
                         </div>
@@ -122,9 +164,9 @@ function Settings() {
                             </div>
 
                             <div className="settings-item-content">
-                                <h3>Profile</h3>
+                                <h3>{th.profile}</h3>
                                 <p>
-                                    Update your personal and career information.
+                                    {th.profileDescription}
                                 </p>
                             </div>
 
@@ -132,7 +174,7 @@ function Settings() {
                                 className="settings-action-btn"
                                 onClick={() => navigate("/profile")}
                             >
-                                Open
+                                {th.open}
                             </button>
 
                         </div>
@@ -148,9 +190,9 @@ function Settings() {
                             <FiBell />
 
                             <div>
-                                <h2>Notifications</h2>
+                                <h2>{th.notifications}</h2>
                                 <p>
-                                    Control the notifications you receive.
+                                    {th.notificationsDescription}
                                 </p>
                             </div>
                         </div>
@@ -164,10 +206,10 @@ function Settings() {
                             </div>
 
                             <div className="settings-item-content">
-                                <h3>Career Updates</h3>
+                                <h3>{th.careerUpdates}</h3>
 
                                 <p>
-                                    Receive updates about your career progress.
+                                    {th.careerUpdatesDescription}
                                 </p>
                             </div>
 
@@ -195,10 +237,10 @@ function Settings() {
                             </div>
 
                             <div className="settings-item-content">
-                                <h3>Roadmap Reminders</h3>
+                                <h3>{th.roadmapReminders}</h3>
 
                                 <p>
-                                    Get reminders about your learning roadmap.
+                                    {th.roadmapRemindersDescription}
                                 </p>
                             </div>
 
@@ -227,10 +269,10 @@ function Settings() {
                             <FiShield />
 
                             <div>
-                                <h2>Privacy & Security</h2>
+                                <h2>{th.privacySecurity}</h2>
 
                                 <p>
-                                    Manage your account security preferences.
+                                    {th.securityDescription}
                                 </p>
                             </div>
                         </div>
@@ -242,15 +284,15 @@ function Settings() {
                             </div>
 
                             <div className="settings-item-content">
-                                <h3>Account Security</h3>
+                                <h3>{th.accountSecurity}</h3>
 
                                 <p>
-                                    Your account is protected with secure authentication.
+                                    {th.securityDetails}
                                 </p>
                             </div>
 
                             <span className="settings-status">
-                                Protected
+                                {th.protected}
                             </span>
 
                         </div>
@@ -262,10 +304,10 @@ function Settings() {
                             </div>
 
                             <div className="settings-item-content">
-                                <h3>Privacy Policy</h3>
+                                <h3>{th.privacyPolicy}</h3>
 
                                 <p>
-                                    Learn how CareerPilot collects, uses, and protects your information.
+                                    {th.privacyDescription}
                                 </p>
                             </div>
 
@@ -273,7 +315,7 @@ function Settings() {
                                 className="settings-action-btn"
                                 onClick={() => navigate("/privacy-policy")}
                             >
-                                View
+                                {th.view}
                             </button>
 
                         </div>

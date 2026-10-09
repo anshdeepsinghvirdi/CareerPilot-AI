@@ -507,6 +507,42 @@
     background: white;
 }
 
+
+.settings-language-select {
+    width: 155px;
+    max-width: 45%;
+    padding: 11px 12px;
+    border: 1px solid rgba(143, 163, 255, 0.3);
+    border-radius: 12px;
+    outline: none;
+    background: rgba(15, 28, 60, 0.85);
+    color: #f5f7ff;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.settings-language-select:hover,
+.settings-language-select:focus {
+    border-color: rgba(129, 150, 255, 0.85);
+    box-shadow: 0 0 16px rgba(80, 107, 255, 0.15);
+}
+
+.settings-language-select option {
+    background: #101a36;
+    color: #f5f7ff;
+}
+
+@media (max-width: 480px) {
+    .settings-language-select {
+        width: 125px;
+        font-size: 12px;
+    }
+}
+
+
 /* =========================
    LIGHT THEME
 ========================= */

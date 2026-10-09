@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {Capacitor } from "@capacitor/core";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
+import { useLanguage } from "../context/LanguageContext";
 import API from "../services/api";
 import {
     FiArrowLeft,
@@ -21,6 +22,8 @@ import "../styles/Dashboard.css";
 function ResumeHistory() {
 
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const th = t.resumeHistory;
 
     const [resumes, setResumes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -242,7 +245,7 @@ function ResumeHistory() {
             <div className="dashboard-content">
 
                 <h1>
-                    Loading Resume History...
+                    {th.loading}
                 </h1>
 
             </div>
@@ -261,7 +264,7 @@ function ResumeHistory() {
                 <button
                     className="back-btn"
                     onClick={() => navigate(-1)}
-                    title="Go Back"
+                    title={th.goBack}
                 >
                     <FiArrowLeft />
                 </button>
@@ -274,15 +277,15 @@ function ResumeHistory() {
                     <div className="resume-history-title-content">
 
                         <p className="welcome-small">
-                            RESUME ANALYSIS
+                            {th.eyebrow}
                         </p>
 
                         <h1>
-                            Resume History
+                            {th.title}
                         </h1>
 
                         <p className="dashboard-subtitle">
-                            View and download your previous AI resume analyses.
+                            {th.subtitle}
                         </p>
 
                     </div>
@@ -305,19 +308,18 @@ function ResumeHistory() {
                         />
 
                         <h2>
-                            No Resumes Yet
+                            {th.noResumes}
                         </h2>
 
                         <p>
-                            Upload your resume to get your AI-powered
-                            resume analysis.
+                            {th.emptyDescription}
                         </p>
 
                         <button
                             className="resume-required-btn"
                             onClick={() => navigate("/resume")}
                         >
-                            Analyze Resume →
+                            {th.analyzeResume}
                         </button>
 
                     </div>
@@ -337,36 +339,31 @@ function ResumeHistory() {
                             const analysis =
                                 parseAnalysis(resume.analysis);
 
+                            
                             const score =
                                 analysis.overall_score ??
                                 analysis.resume_score ??
                                 0;
 
-                            const strengths =
-                                Array.isArray(analysis.strengths)
-                                    ? analysis.strengths
-                                    : [];
+                            const strengths = Array.isArray(analysis.strengths)
+                                ? analysis.strengths
+                                : [];
 
-                            const weaknesses =
-                                Array.isArray(analysis.weaknesses)
-                                    ? analysis.weaknesses
-                                    : [];
+                            const weaknesses = Array.isArray(analysis.weaknesses)
+                                ? analysis.weaknesses
+                                : [];
 
-                            const missingSkills =
-                                Array.isArray(analysis.missing_skills)
-                                    ? analysis.missing_skills
-                                    : [];
+                            const missingSkills = Array.isArray(analysis.missing_skills)
+                                ? analysis.missing_skills
+                                : [];
 
-                            const recommendedJobs =
-                                Array.isArray(analysis.recommended_jobs)
-                                    ? analysis.recommended_jobs
-                                    : [];
+                            const recommendedJobs = Array.isArray(analysis.recommended_jobs)
+                                ? analysis.recommended_jobs
+                                : [];
 
-                            const learningRoadmap =
-                                Array.isArray(analysis.learning_roadmap)
-                                    ? analysis.learning_roadmap
-                                    : [];
-
+                            const learningRoadmap = Array.isArray(analysis.learning_roadmap)
+                                ? analysis.learning_roadmap
+                                : [];
 
                             return (
 
@@ -404,7 +401,7 @@ function ResumeHistory() {
                                                         marginTop: "5px"
                                                     }}
                                                 >
-                                                    Resume ID: {resume.id}
+                                                    {th.resumeId}: {resume.id}
                                                 </p>
 
                                             </div>
@@ -422,7 +419,7 @@ function ResumeHistory() {
                                                     fontSize: "13px"
                                                 }}
                                             >
-                                                Resume Score
+                                                {th.resumeScore}
                                             </span>
 
                                             <h2
@@ -476,7 +473,7 @@ function ResumeHistory() {
                                                 }}
                                             >
                                                 <FiCheckCircle />
-                                                Strengths
+                                                {th.strengths}
                                             </h3>
 
                                             <ul
@@ -522,7 +519,7 @@ function ResumeHistory() {
                                                 }}
                                             >
                                                 <FiAlertTriangle />
-                                                Weaknesses
+                                                {th.weaknesses}
                                             </h3>
 
                                             <ul
@@ -568,7 +565,7 @@ function ResumeHistory() {
                                                 }}
                                             >
                                                 <FiTarget />
-                                                Missing Skills
+                                                {th.missingSkills}
                                             </h3>
 
                                             <div
@@ -627,7 +624,7 @@ function ResumeHistory() {
                                                 }}
                                             >
                                                 <FiBriefcase />
-                                                Recommended Jobs
+                                                {th.recommendedJobs}
                                             </h3>
 
                                             <ul
@@ -673,7 +670,7 @@ function ResumeHistory() {
                                                 }}
                                             >
                                                 <FiBookOpen />
-                                                Learning Roadmap
+                                                {th.learningRoadmap}
                                             </h3>
 
                                             <ol
@@ -713,7 +710,7 @@ function ResumeHistory() {
                                             }
                                         >
                                             <FiDownload />
-                                            Download Resume
+                                            {th.downloadResume}
                                         </button>
 
                                         <button
@@ -723,7 +720,7 @@ function ResumeHistory() {
                                             }
                                         >
                                             <FiDownload />
-                                            Download AI Analysis
+                                            {th.downloadAnalysis}
                                         </button>
 
                                         <button
@@ -733,7 +730,7 @@ function ResumeHistory() {
                                             }
                                         >
                                             <FiTrash2 />
-                                            Delete
+                                            {th.delete}
                                         </button>
 
                                     </div>
@@ -760,11 +757,10 @@ function ResumeHistory() {
                             🗑️
                         </div>
 
-                        <h2>Delete Resume?</h2>
+                        <h2>{th.deleteTitle}</h2>
 
                         <p>
-                            Are you sure you want to delete this resume?
-                            This action cannot be undone.
+                            {th.deleteDescription}
                         </p>
 
                         <div className="delete-modal-actions">
@@ -776,14 +772,14 @@ function ResumeHistory() {
                                     setDeleteId(null);
                                 }}
                             >
-                                Cancel
+                                {th.cancel}
                             </button>
 
                             <button
                                 className="delete-confirm-btn"
                                 onClick={confirmDeleteResume}
                             >
-                                Delete Resume
+                                {th.deleteResume}
                             </button>
 
                         </div>

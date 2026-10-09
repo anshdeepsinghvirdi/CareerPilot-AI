@@ -5,10 +5,12 @@ import AnimatedBackground from "../components/AnimatedBackground";
 import { motion } from "framer-motion";
 import { FiMail, FiArrowRight } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
+import { useLanguage } from "../context/LanguageContext";
 
 import "../styles/login.css";
 
 function ForgotPassword() {
+    const { t } = useLanguage();
 
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -20,7 +22,7 @@ function ForgotPassword() {
         e.preventDefault();
 
         if (!email) {
-            toast.error("Please enter your email");
+            toast.error(t.forgotPassword.invalidEmail);
             return;
         }
 
@@ -32,7 +34,7 @@ function ForgotPassword() {
                 email: email
             });
 
-            toast.success("Password reset link sent to your email!");
+            toast.success(t.forgotPassword.success);
 
             setTimeout(() => {
                 navigate("/login");
@@ -41,13 +43,13 @@ function ForgotPassword() {
         } catch (error) {
 
             console.error(
-                "FORGOT PASSWORD ERROR:",
+                t.forgotPassword.error,
                 error.response?.data
             );
 
             toast.error(
                 error.response?.data?.detail ||
-                "Failed to send reset email"
+                t.forgotPassword.error
             );
 
         } finally {
@@ -89,11 +91,11 @@ function ForgotPassword() {
                         <div className="login-brand-text">
 
                             <h1>
-                                CareerPilot AI
+                                {t.forgotPassword.title}
                             </h1>
 
                             <p className="subtitle">
-                                Reset Your Password
+                                {t.forgotPassword.subtitle}
                             </p>
 
                         </div>
@@ -105,18 +107,13 @@ function ForgotPassword() {
                         onSubmit={handleForgotPassword}
                     >
 
-                        <p className="subtitle">
-                            Enter your registered email and
-                            we'll send you a password reset link.
-                        </p>
-
                         <div className="input-box">
 
                             <FiMail />
 
                             <input
                                 type="email"
-                                placeholder="Email Address"
+                                placeholder={t.forgotPassword.email}
                                 value={email}
                                 autoComplete="email"
                                 onChange={(e) =>
@@ -132,8 +129,8 @@ function ForgotPassword() {
                             disabled={loading}
                         >
                             {loading
-                                ? "Sending..."
-                                : "Send Reset Link"
+                                ? t.forgotPassword.sending
+                                : t.forgotPassword.send
                             }
 
                             {!loading && <FiArrowRight />}
@@ -153,7 +150,7 @@ function ForgotPassword() {
                                 cursor: "pointer"
                             }}
                         >
-                            Back to Login
+                            {t.forgotPassword.backToLogin}
                         </button>
 
                     </div>

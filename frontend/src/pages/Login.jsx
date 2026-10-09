@@ -1,25 +1,113 @@
+
 import { useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AnimatedBackground from "../components/AnimatedBackground";
 import { motion } from "framer-motion";
-import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import {
+    FiMail,
+    FiLock,
+    FiArrowRight,
+    FiGlobe,
+    FiChevronDown,
+    FiCheck,
+} from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
+import { useLanguage } from "../context/LanguageContext";
 
-import "../styles/login.css"
+import "../styles/login.css";
+
+
+function LanguageSelector() {
+    const { language, setLanguage } = useLanguage();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const languages = [
+        { code: "en", label: "English" },
+        { code: "hi", label: "हिन्दी" },
+        { code: "mr", label: "मराठी" },
+    ];
+
+    const selected =
+        languages.find((item) => item.code === language) ||
+        languages[0];
+
+    return (
+        <div className="login-language-wrapper">
+            <button
+                type="button"
+                className={`login-language-trigger ${
+                    isOpen ? "active" : ""
+                }`}
+                onClick={() => setIsOpen((previous) => !previous)}
+                aria-expanded={isOpen}
+                aria-label="Select language"
+            >
+                <FiGlobe className="login-language-globe" />
+
+                <span>{selected.label}</span>
+
+                <FiChevronDown
+                    className={`login-language-chevron ${
+                        isOpen ? "rotated" : ""
+                    }`}
+                />
+            </button>
+
+            {isOpen && (
+                <>
+                    <button
+                        type="button"
+                        className="login-language-dismiss"
+                        aria-label="Close language menu"
+                        onClick={() => setIsOpen(false)}
+                    />
+
+                    <div className="login-language-menu">
+                        <p className="login-language-heading">
+                            SELECT LANGUAGE
+                        </p>
+
+                        {languages.map((item) => (
+                            <button
+                                type="button"
+                                key={item.code}
+                                className={`login-language-option ${
+                                    language === item.code
+                                        ? "selected"
+                                        : ""
+                                }`}
+                                onClick={() => {
+                                    setLanguage(item.code);
+                                    setIsOpen(false);
+                                }}
+                            >
+                                <span>{item.label}</span>
+
+                                {language === item.code && (
+                                    <FiCheck className="login-language-check" />
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
 
 function Login() {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    
+
     const navigate = useNavigate();
+    const { t } = useLanguage();
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-
             const formData = new URLSearchParams();
 
             formData.append("username", email);
@@ -30,7 +118,8 @@ function Login() {
                 formData,
                 {
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Content-Type":
+                            "application/x-www-form-urlencoded",
                     },
                 }
             );
@@ -40,41 +129,35 @@ function Login() {
                 response.data.access_token
             );
 
-            const logoutTime = localStorage.getItem("roadmapLogoutTime");
+            const logoutTime =
+                localStorage.getItem("roadmapLogoutTime");
 
             if (logoutTime) {
-
                 const currentTime = Date.now();
 
                 const timePassed =
                     currentTime - Number(logoutTime);
 
-                const twoDays =
-                    48 * 60 * 60 * 1000;
+                const twoDays = 48 * 60 * 60 * 1000;
 
                 if (timePassed >= twoDays) {
-
                     localStorage.setItem(
                         "roadmapReminderDue",
                         "true"
                     );
-
                 }
 
                 localStorage.removeItem("roadmapLogoutTime");
             }
 
-            toast.success("Welcome Back 🚀");
+            toast.success(t.login.welcome);
 
             setTimeout(() => {
-
                 navigate("/dashboard");
-
             }, 1000);
 
-        } catch {
-
-            toast.error("Invalid Email or Password");
+        } catch (error) {
+            toast.error(t.login.invalid);
         }
     };
 
@@ -82,20 +165,26 @@ function Login() {
         <>
             <AnimatedBackground />
 
-            <Toaster position="top-right"/>
+            <Toaster position="top-right" />
 
             <div className="login-page">
 
+                <LanguageSelector />
+
                 <motion.div
-
                     className="login-card"
-                    
-                    initial={{ opacity: 0, y: 40 }}
-
-                    animate={{ opacity: 1, y: 0 }}
-
-                    transition={{ duration: 0.6 }}
-                >   
+                    initial={{
+                        opacity: 0,
+                        y: 40,
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0,
+                    }}
+                    transition={{
+                        duration: 0.6,
+                    }}
+                >
                     <div className="login-brand">
                         <div className="login-logo">
                             <img
@@ -105,94 +194,70 @@ function Login() {
                         </div>
 
                         <div className="login-brand-text">
-
-                            <h1>
-
-                                CareerPilot AI
-
-                            </h1>
+                            <h1>CareerPilot AI</h1>
 
                             <p className="subtitle">
-
-                                Your Intelligent Career Companion
-
+                                {t.login.subtitle}
                             </p>
                         </div>
-                        
                     </div>
 
-                    
-
-                    
-
-                    <form 
+                    <form
                         className="login-form"
-                        onSubmit={handleLogin}>
-
+                        onSubmit={handleLogin}
+                    >
                         <div className="input-box">
-
-                            <FiMail/>
-
-                            <input 
-                                
-                                type="email"
-
-                                placeholder="Email Address"
-
-                                value={email}
-
-                                autoComplete="email"
-
-                                onChange={(e)=>setEmail(e.target.value)}
-
-                            />
-
-                        </div>
-
-                        <div className="input-box">
-
-                            <FiLock/>
+                            <FiMail />
 
                             <input
-                               
-                               type="password"
-                               placeholder="Password"
-                               value={password}
-                               autoComplete="current-password"
-                               onChange={(e)=>setPassword(e.target.value)}
+                                type="email"
+                                placeholder={t.login.email}
+                                value={email}
+                                autoComplete="email"
+                                onChange={(e) =>
+                                    setEmail(e.target.value)
+                                }
+                                required
                             />
-                        
                         </div>
 
-                        <button 
-                            type="submit"
-                            className="login-btn">
-                                Login
-                            <FiArrowRight/>
-                        </button>
+                        <div className="input-box">
+                            <FiLock />
 
+                            <input
+                                type="password"
+                                placeholder={t.login.password}
+                                value={password}
+                                autoComplete="current-password"
+                                onChange={(e) =>
+                                    setPassword(e.target.value)
+                                }
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="login-btn"
+                        >
+                            {t.login.button}
+                            <FiArrowRight />
+                        </button>
                     </form>
 
                     <div className="bottom-links">
-
                         <Link to="/forgot-password">
-
-                            Forgot Password?
-                                
+                            {t.login.forgotPassword}
                         </Link>
 
                         <Link to="/signup">
-
-                            Create Account
-                        
+                            {t.login.createAccount}
                         </Link>
                     </div>
-
                 </motion.div>
-
             </div>
         </>
     );
-};
+}
 
 export default Login;

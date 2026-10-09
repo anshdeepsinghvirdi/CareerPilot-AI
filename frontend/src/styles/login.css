@@ -316,6 +316,168 @@
         0 0 0 1000px transparent inset;
 }
 
+
+
+
+/* Premium language selector */
+.login-language-wrapper {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    width: 190px;
+    font-family: inherit;
+}
+
+.login-language-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 15px;
+    border: 1px solid rgba(160, 176, 255, 0.3);
+    border-radius: 15px;
+    background: rgba(12, 24, 53, 0.82);
+    color: #f5f7ff;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.login-language-trigger:hover,
+.login-language-trigger.active {
+    border-color: rgba(135, 153, 255, 0.85);
+    background: rgba(31, 48, 95, 0.96);
+    box-shadow: 0 0 22px rgba(80, 107, 255, 0.18);
+}
+
+.login-language-globe {
+    width: 21px;
+    height: 21px;
+    color: #aab9ff;
+    flex-shrink: 0;
+}
+
+.login-language-trigger span {
+    flex: 1;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.login-language-chevron {
+    width: 17px;
+    height: 17px;
+    color: #aab9ff;
+    transition: transform 0.25s ease;
+}
+
+.login-language-chevron.rotated {
+    transform: rotate(180deg);
+}
+
+/* Dropdown menu */
+.login-language-menu {
+    position: absolute;
+    top: calc(100% + 9px);
+    right: 0;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgba(150, 168, 255, 0.25);
+    border-radius: 15px;
+    background: rgba(9, 19, 43, 0.97);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    animation: loginLanguageOpen 0.18s ease-out;
+}
+
+.login-language-heading {
+    margin: 0;
+    padding: 9px 10px;
+    color: #8e9fc9;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.login-language-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #e8edff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.login-language-option:hover {
+    background: rgba(94, 119, 255, 0.15);
+}
+
+.login-language-option.selected {
+    border-color: rgba(132, 149, 255, 0.2);
+    background: linear-gradient(
+        110deg,
+        rgba(42, 99, 240, 0.24),
+        rgba(106, 73, 230, 0.2)
+    );
+}
+
+.login-language-check {
+    width: 17px;
+    height: 17px;
+    color: #a8b6ff;
+}
+
+.login-language-dismiss {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+}
+
+@keyframes loginLanguageOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .login-language-wrapper {
+        top: 14px;
+        right: 14px;
+        width: 160px;
+    }
+
+    .login-language-trigger {
+        min-height: 46px;
+        padding: 0 12px;
+    }
+}
+
+
+
 /* =========================
    LOGIN BRAND
 ========================= */

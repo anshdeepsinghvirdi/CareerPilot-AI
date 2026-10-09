@@ -5,11 +5,14 @@ import AnimatedBackground from "../components/AnimatedBackground";
 import "../styles/Profile.css";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import { useLanguage } from "../context/LanguageContext";
 import toast, { Toaster } from "react-hot-toast";
 
 function Profile() {
 
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const th = t.profile;
 
     const [profile, setProfile] = useState({});
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -39,7 +42,7 @@ function Profile() {
 
             console.log(error);
 
-            alert("Failed to load profile");
+            alert(th.loadError);
         }
     };
 
@@ -67,7 +70,7 @@ function Profile() {
             );
 
             toast.success(
-                "Profile Updated Successfully!"
+                th.saved
             );
 
         } catch (error) {
@@ -75,7 +78,7 @@ function Profile() {
             console.log(error);
 
             toast.error(
-                "Failed to update profile"
+                th.updateError
             );
         }
     };
@@ -111,7 +114,7 @@ function Profile() {
             localStorage.removeItem("user");
 
             toast.success(
-                "Account deleted successfully."
+                th.deleted
             );
 
             // Give toast a moment to display
@@ -124,13 +127,13 @@ function Profile() {
         } catch (error) {
 
             console.error(
-                "Account deletion error:",
+                th.deletionError,
                 error
             );
 
             toast.error(
                 error?.response?.data?.detail ||
-                "Failed to delete account."
+                th.deleteError
             );
 
             setDeletingAccount(false);
@@ -150,7 +153,7 @@ function Profile() {
                 <button
                     className="back-btn"
                     onClick={() => navigate(-1)}
-                    title="Go Back"
+                    title={th.goBack}
                 >
                     <FiArrowLeft />
                 </button>
@@ -165,16 +168,15 @@ function Profile() {
                     <div>
 
                         <p className="profile-eyebrow">
-                            PERSONAL INFORMATION
+                            {th.eyebrow}
                         </p>
 
                         <h1>
-                            My Profile
+                            {th.title}
                         </h1>
 
                         <p>
-                            Manage your personal information
-                            and career preferences.
+                            {th.subtitle}
                         </p>
 
                     </div>
@@ -185,14 +187,14 @@ function Profile() {
                 <div className="profile-card">
 
                     <h2>
-                        Profile Information
+                        {th.information}
                     </h2>
 
 
                     <div className="profile-field">
 
                         <label>
-                            Name
+                            {th.name}
                         </label>
 
                         <p>
@@ -205,7 +207,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            Email
+                            {th.email}
                         </label>
 
                         <p>
@@ -218,7 +220,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            College
+                            {th.college}
                         </label>
 
                         <input
@@ -238,7 +240,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            Branch
+                            {th.branch}
                         </label>
 
                         <input
@@ -258,7 +260,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            Graduation Year
+                            {th.graduationYear}
                         </label>
 
                         <input
@@ -281,7 +283,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            Skills
+                            {th.skills}
                         </label>
 
                         <input
@@ -301,7 +303,7 @@ function Profile() {
                     <div className="profile-field">
 
                         <label>
-                            Career Goal
+                            {th.careerGoal}
                         </label>
 
                         <input
@@ -325,7 +327,7 @@ function Profile() {
                         className="profile-save-btn"
                         onClick={saveProfile}
                     >
-                        Save Profile
+                        {th.save}
                     </button>
 
                 </div>
@@ -346,12 +348,11 @@ function Profile() {
                         <div>
 
                             <h2>
-                                Danger Zone
+                                {th.dangerZone}
                             </h2>
 
                             <p>
-                                Permanently delete your
-                                CareerPilot AI account.
+                                {th.deleteDescription}
                             </p>
 
                         </div>
@@ -362,14 +363,11 @@ function Profile() {
                     <div className="delete-account-content">
 
                         <p>
-                            Deleting your account will permanently
-                            remove your profile, uploaded resumes,
-                            resume analyses, roadmaps, and roadmap
-                            progress.
+                            {th.deletedetails}   
                         </p>
 
                         <p className="delete-warning">
-                            This action cannot be undone.
+                            {th.cannotUndo}
                         </p>
 
 
@@ -382,7 +380,7 @@ function Profile() {
                         >
                             <FiTrash2 />
 
-                            Delete Account
+                            {th.deleteAccount}
                         </button>
 
                     </div>
@@ -405,22 +403,19 @@ function Profile() {
                             </div>
 
                             <h2>
-                                Delete Account?
+                                {th.confirmtitle}
                             </h2>
 
                             <p>
-                                Are you sure you want to permanently
-                                delete your CareerPilot AI account?
+                                {th.confirmDescription}
                             </p>
 
                             <p>
-                                Your profile, resumes, AI analyses,
-                                roadmaps, and progress will be
-                                permanently deleted.
+                                {th.confirmDetails}
                             </p>
 
                             <strong>
-                                This action cannot be undone.
+                                {th.cannotUndo}
                             </strong>
 
 
@@ -433,7 +428,7 @@ function Profile() {
                                     }
                                     disabled={deletingAccount}
                                 >
-                                    Cancel
+                                    {th.cancel}
                                 </button>
 
 
@@ -445,8 +440,8 @@ function Profile() {
                                     <FiTrash2 />
 
                                     {deletingAccount
-                                        ? "Deleting..."
-                                        : "Delete Permanently"}
+                                        ? th.deleting
+                                        : th.deletePermanently}
                                 </button>
 
                             </div>

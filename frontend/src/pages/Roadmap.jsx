@@ -12,11 +12,14 @@ import { motion } from "framer-motion";
 
 import AnimatedBackground from "../components/AnimatedBackground";
 import { startCareerPilotReminders } from "../services/notification";
+import { useLanguage } from "../context/LanguageContext";
 import API from "../services/api";
 import "../styles/roadmap.css";
 
 function Roadmap() {
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const th = t.roadmap;
 
     const [roadmap, setRoadmap] = useState("");
     const [loading, setLoading] = useState(true);
@@ -90,7 +93,7 @@ function Roadmap() {
                 err
             );
 
-            alert("Failed to complete stage.");
+            alert(th.completeError);
         } finally {
             setCompleting(false);
         }
@@ -105,11 +108,11 @@ function Roadmap() {
                     <FiMap className="roadmap-loading-icon" />
 
                     <h2>
-                        Loading your career roadmap...
+                        {th.loading}
                     </h2>
 
                     <p>
-                        AI is preparing your career journey.
+                        {th.preparing}
                     </p>
                 </div>
             </>
@@ -127,7 +130,7 @@ function Roadmap() {
                     <button
                         className="back-btn"
                         onClick={() => navigate(-1)}
-                        title="Go Back"
+                        title={th.goBack}
                     >
                         <FiArrowLeft />
                     </button>
@@ -152,12 +155,23 @@ function Roadmap() {
                                 </div>
 
                                 <h2>
-                                    Set Your Career Goal First
+                                    {th.setGoalTitle}
                                 </h2>
 
                                 <p>
-                                    Please complete your profile and select
-                                    your career goal before generating your
+                                    {th.setGoalDescription}
+                                </p>
+
+                                <button
+                                    className="complete-stage-btn"
+                                    onClick={() =>
+                                        navigate("/profile")
+                                    }
+                                >
+                                    {th.setCareerGoal}
+                                </button>
+
+                                <p >
                                     personalized AI career roadmap.
                                 </p>
 
@@ -167,7 +181,7 @@ function Roadmap() {
                                         navigate("/profile")
                                     }
                                 >
-                                    Set Career Goal
+                                    {th.setCareerGoal}
                                 </button>
 
                             </div>
@@ -211,17 +225,15 @@ function Roadmap() {
 
                     <div>
                         <p className="roadmap-eyebrow">
-                            AI CAREER PLANNING
+                            {th.eyebrow}
                         </p>
 
                         <h1>
-                            Your Career Roadmap
+                            {th.title}
                         </h1>
 
                         <p>
-                            A personalized path designed to
-                            take you from your current level
-                            to your target career.
+                            {th.subtitle}
                         </p>
                     </div>
                 </motion.div>
@@ -239,18 +251,18 @@ function Roadmap() {
                 >
                     <div>
                         <span className="overview-label">
-                            CURRENT LEVEL
+                            {th.currentLevel}
                         </span>
 
                         <h2>
                             {roadmap?.current_level ||
-                                "Beginner"}
+                                th.beginner}
                         </h2>
                     </div>
 
                     <div>
                         <span className="overview-label">
-                            TARGET CAREER
+                            {th.targetCareer}
                         </span>
 
                         <h2>
@@ -260,7 +272,7 @@ function Roadmap() {
 
                     <div>
                         <span className="overview-label">
-                            TOTAL STAGES
+                            {th.totalStages}
                         </span>
 
                         <h2>
@@ -274,12 +286,11 @@ function Roadmap() {
                     <div className="roadmap-title">
                         <div>
                             <h2>
-                                Your Learning Journey
+                                {th.learningJourney}
                             </h2>
 
                             <p>
-                                Complete each stage to move
-                                closer to your career goal.
+                                {th.journeyDescription}
                             </p>
                         </div>
                     </div>
@@ -333,7 +344,7 @@ function Roadmap() {
                                         <div className="stage-card">
 
                                             <div className="stage-number">
-                                                STAGE {index + 1}
+                                                {th.stage} {index + 1}
                                             </div>
 
                                             <h3>
@@ -345,14 +356,14 @@ function Roadmap() {
                                                 {isCompleted && (
                                                     <>
                                                         <FiCheckCircle />
-                                                        Completed
+                                                        {th.completed}
                                                     </>
                                                 )}
 
                                                 {isCurrent && (
                                                     <>
                                                         <FiClock />
-                                                        Currently Learning
+                                                        {th.currentlyLearning}
                                                     </>
                                                 )}
 
@@ -360,7 +371,7 @@ function Roadmap() {
                                                     "upcoming" && (
                                                     <>
                                                         <FiCircle />
-                                                        Upcoming
+                                                        {th.upcoming}
                                                     </>
                                                 )}
 
@@ -381,8 +392,8 @@ function Roadmap() {
                                                     <FiCheckCircle />
 
                                                     {completing
-                                                        ? "Completing..."
-                                                        : "Complete Stage"}
+                                                        ? th.completing
+                                                        : th.completeStage}
                                                 </button>
                                             )}
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 import {
     FiUploadCloud,
     FiFileText,
@@ -21,6 +22,7 @@ import "../styles/resumeAnalyzer.css";
 function ResumeAnalyzer() {
 
     const navigate = useNavigate();
+    const { t } = useLanguage();
 
     const [file, setFile] = useState(null);
     const [analysis, setAnalysis] = useState(null);
@@ -108,16 +110,15 @@ function ResumeAnalyzer() {
 
                         <div className="resume-header-text">
                             <p className="resume-eyebrow">
-                                AI POWERED ANALYSIS
+                                {t.resume.eyebrow}
                             </p>
 
                             <h1>
-                                Resume Analyzer
+                                {t.resume.title}
                             </h1>
 
                             <p>
-                                Let AI analyze your resume and discover
-                                how ready you are for your target career.
+                                {t.resume.subtitle}
                             </p>
                         </div>
 
@@ -128,7 +129,7 @@ function ResumeAnalyzer() {
                         onClick={() => navigate("/resume-history")}
                     >
                         <FiClock />
-                        <span>History</span>
+                        <span>{t.resume.history}</span>
                     </button>
 
                 </motion.div>
@@ -148,18 +149,18 @@ function ResumeAnalyzer() {
                         onClick={() => document.getElementById("resume-input").click()}
                     >
                         <FiUploadCloud />
-                        <span className="upload-tooltip">Upload Resume</span>
+                        <span className="upload-tooltip">{t.resume.uploadTitle}</span>
                     </div>
 
                     <div className="upload-text">
                         <strong>
-                            {file ? file.name : "Choose your resume"}
+                            {file ? file.name : t.resume.chooseResume}
                         </strong>
 
                         <span>
                             {file
                                 ? `${(file.size / 1024 / 1024).toFixed(2)} MB`
-                                : "PDF or DOCX • Maximum recommended size 10MB"}
+                                : t.resume.fileInfo}
                         </span>
                     </div>
 
@@ -170,7 +171,7 @@ function ResumeAnalyzer() {
                         }}
                         disabled={!file || loading}
                     >
-                        {loading ? "Analyzing..." : "Analyze Resume"}
+                        {loading ? t.resume.analyzing : t.resume.analyze}
                         {!loading && <FiArrowRight />}
                     </button>
                 </div>
@@ -184,11 +185,10 @@ function ResumeAnalyzer() {
                         <FiLoader className="spin" />
                         <div>
                             <strong>
-                                AI is analyzing your resume...
+                                {t.resume.aiAnalyzing}
                             </strong>
                             <p>
-                                Checking skills, projects,
-                                experience and ATS compatibility.
+                                {t.resume.checkingSkills}
                             </p>
                         </div>
                     </motion.div>

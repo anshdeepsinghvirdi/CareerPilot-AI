@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../services/api";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 import {
     FiUser,
     FiMail,
@@ -24,6 +25,7 @@ function Signup() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { t } = useLanguage();
 
     const navigate = useNavigate();
 
@@ -32,17 +34,17 @@ function Signup() {
 
         // Basic validation
         if (!name || !email || !password || !confirmPassword) {
-            toast.error("Please fill all fields.");
+            toast.error(t("signup.fillAllFields"));
             return;
         }
 
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match.");
+            toast.error(t("signup.passwordsMismatch"));
             return;
         }
 
         if (password.length < 6) {
-            toast.error("Password must be at least 6 characters.");
+            toast.error(t("signup.passwordLength"));
             return;
         }
 
@@ -59,7 +61,7 @@ function Signup() {
 
             console.log("Signup Success:", response.data);
 
-            toast.success("Account created successfully!");
+            toast.success(t.signup.accountCreated);
 
             setTimeout(() => {
                 navigate("/login");
@@ -77,12 +79,12 @@ function Signup() {
                 const message =
                     error.response.data?.detail ||
                     error.response.data?.message ||
-                    "Signup failed.";
+                    t("signup.signupFailed");
 
                 toast.error(message);
 
             } else {
-                toast.error("Unable to connect to server.");
+                toast.error(t("signup.unableToConnect"));
             }
 
         } finally {
@@ -114,6 +116,7 @@ function Signup() {
                         />
 
                         <div className="signup-brand-text">
+                            {t.signup.tagline}
                             <h2>CareerPilot AI</h2>
                             <p>Your Intelligent Career Companion</p>
                         </div>
@@ -127,7 +130,7 @@ function Signup() {
 
                             <input
                                 type="text"
-                                placeholder="Full Name"
+                                placeholder={t.signup.fullName}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
@@ -140,7 +143,7 @@ function Signup() {
 
                             <input
                                 type="email"
-                                placeholder="Email Address"
+                                placeholder={t.signup.email}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -153,7 +156,7 @@ function Signup() {
 
                             <input
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Password"
+                                placeholder={t.signup.password}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -182,7 +185,7 @@ function Signup() {
                                         ? "text"
                                         : "password"
                                 }
-                                placeholder="Confirm Password"
+                                placeholder={t.signup.confirmPassword}
                                 value={confirmPassword}
                                 onChange={(e) =>
                                     setConfirmPassword(e.target.value)
@@ -211,8 +214,8 @@ function Signup() {
                             disabled={loading}
                         >
                             {loading
-                                ? "Creating Account..."
-                                : "Create Account"
+                                ? t.signup.creatingAccount
+                                : t.signup.createAccount
                             }
 
                             {!loading && <FiArrowRight />}
@@ -223,11 +226,11 @@ function Signup() {
                     <div className="bottom-links">
 
                         <span>
-                            Already have an account?
+                            {t.signup.alreadyHaveAccount}
                         </span>
 
                         <Link to="/login">
-                            Login
+                            {t.signup.login}
                         </Link>
 
                     </div>

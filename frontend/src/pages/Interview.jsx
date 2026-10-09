@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 import { SpeechRecognition } from "@capacitor-community/speech-recognition";
 import {
     FiArrowLeft,
@@ -19,6 +20,8 @@ import "../styles/interview.css";
 function Interview() {
 
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const th = t.mockInterview;
 
     const [role, setRole] = useState("");
     const [question, setQuestion] = useState("");
@@ -66,7 +69,7 @@ function Interview() {
 
         } catch (error) {
             console.error(error);
-            alert("Failed to start interview");
+            alert(th.startError);
         }
     };
 
@@ -99,7 +102,7 @@ function Interview() {
                 if (
                     permission.speechRecognition !== "granted"
                 ) {
-                    alert("Microphone permission is required.");
+                    alert(th.microphonePermission);
                     return;
                 }
 
@@ -108,7 +111,7 @@ function Interview() {
 
                 if (!available.available) {
                     alert(
-                        "Speech recognition is not available on this device."
+                        th.speechUnavailable
                     );
                     return;
                 }
@@ -163,7 +166,7 @@ function Interview() {
             if (!BrowserSpeechRecognition) {
 
                 alert(
-                    "Speech recognition is not supported in this browser. Please use Google Chrome."
+                    th.speechUnavailable
                 );
 
                 return;
@@ -249,7 +252,7 @@ function Interview() {
                 if (event.error === "not-allowed") {
 
                     alert(
-                        "Chrome microphone permission was denied."
+                        th.microphoneDenied
                     );
 
                 } else if (event.error === "no-speech") {
@@ -259,13 +262,13 @@ function Interview() {
                 } else if (event.error === "audio-capture") {
 
                     alert(
-                        "Chrome could not access your microphone."
+                        th.microphoneAccessError
                     );
 
                 } else if (event.error === "network") {
 
                     alert(
-                        "Speech recognition network error. Please check your internet connection."
+                        th.speechNetworkError
                     );
 
                 } else {
@@ -306,8 +309,7 @@ function Interview() {
             setIsListening(false);
 
             alert(
-                "Unable to start voice recognition.\n\n" +
-                (error?.message || error)
+                th.voiceErrorPrefix + event.error
             );
         }
     };
@@ -349,7 +351,7 @@ function Interview() {
     const submitAnswer = async () => {
 
         if (!answer.trim()) {
-            alert("Please write your answer first.");
+            alert(th.emptyAnswer);
             return;
         }
 
@@ -381,7 +383,7 @@ function Interview() {
 
         } catch (error) {
             console.error(error);
-            alert("Failed to evaluate answer");
+            alert(th.evaluationError);
         } finally {
             setEvaluating(false);
         }
@@ -395,7 +397,7 @@ function Interview() {
                 <button 
                     className="back-btn"
                     onClick={() => navigate(-1)}
-                    title="Go Back"
+                    title={th.goBack}
                 >
                     <FiArrowLeft />
                 </button>
@@ -411,14 +413,13 @@ function Interview() {
 
                     <div>
                         <p className="interview-eyebrow">
-                            AI INTERVIEW PRACTICE
+                            {th.eyebrow}
                         </p>
                         <h1>
-                            Mock Interview
+                            {th.title}
                         </h1>
                         <p>
-                            Practice real interview questions and 
-                            get instant AI-powered feedback.
+                            {th.subtitle}
                         </p>
                     </div>
                 </motion.div>
@@ -433,10 +434,10 @@ function Interview() {
                         <FiBriefcase />
                         <div>
                             <h2>
-                                Choose Your Role
+                                {th.chooseRole}
                             </h2>
                             <p>
-                                Select the role you want to practice for.
+                                {th.chooseRoleDescription}
                             </p>
                         </div>
                     </div>
@@ -469,7 +470,7 @@ function Interview() {
                         ) : (
                             <>
                                 <FiPlay />
-                                Start Interview
+                                {th.start}
                             </>
                         )}
                     </button>
@@ -487,7 +488,7 @@ function Interview() {
                             </div>
                             <div>
                                 <span>
-                                    INTERVIEW QUESTION
+                                    {th.questionLabel}
                                 </span>
                                 <h2>
                                     {role}
@@ -503,7 +504,7 @@ function Interview() {
 
                         <div className="answer-section">
                             <label>
-                                Your Answer
+                                {th.yourAnswer}
                             </label>
 
                             <div className="answer-input-wrapper">
@@ -511,8 +512,8 @@ function Interview() {
                                 <textarea
                                     placeholder={
                                         isListening
-                                            ? "Listening... Speak your answer."
-                                            : "Write your answer or use the microphone..."
+                                            ? th.listeningPlaceholder
+                                            : th.answerPlaceholder
                                     }
                                     value={answer}
                                     onChange={(e) => setAnswer(e.target.value)}
@@ -539,16 +540,16 @@ function Interview() {
                                         }}
                                         title={
                                             isListening
-                                                ? "Listening..."
-                                                : "Speak your answer"
+                                                ? th.listening
+                                                : th.speakAnswer
                                         }
                                     >
                                         <FiMic />
 
                                         {isListening ? (
-                                            <span>Listening...</span>
+                                            <span>{th.listening}</span>
                                         ) : (
-                                            <span>Speak</span>
+                                            <span>{th.speak}</span>
                                         )}
                                     </button>
                                 )}
@@ -561,11 +562,11 @@ function Interview() {
                                 disabled={evaluating}
                             >
                                 {evaluating ? (
-                                    "Evaluating..."
+                                    <span>{th.evaluating}</span>
                                 ) : (
                                     <>
                                         <FiSend />
-                                        Submit Answer
+                                        <span>{th.submitAnswer}</span>
                                     </>
                                 )}
                             </button>
@@ -588,11 +589,11 @@ function Interview() {
                             <div>
 
                                 <span>
-                                    AI POWERED FEEDBACK
+                                    {th.feedbackLabel}
                                 </span>
 
                                 <h2>
-                                    Interview Evaluation
+                                    {th.evaluationTitle}
                                 </h2>
 
                             </div>

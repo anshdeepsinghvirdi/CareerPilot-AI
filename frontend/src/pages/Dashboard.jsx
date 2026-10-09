@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext"; 
 
 import {
     FiFileText,
@@ -23,6 +24,7 @@ import "../styles/Dashboard.css";
 function Dashboard() {
 
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [dashboardData, setDashboardData] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [resumeScore, setResumeScore] = useState(null);
@@ -126,52 +128,44 @@ function Dashboard() {
                     <nav className="sidebar-nav">
                         <a className="active">
                             <FiTarget />
-                            Dashboard
+                            {t.dashboard.dashboard}
                         </a>
 
                         <a onClick={() => navigate("/resume")}>
                             <FiFileText />
-                            Resume Analyzer
+                            {t.dashboard.resumeAnalyzer}
                         </a>
 
                         <a onClick={() => navigate("/roadmap")}>
                             <FiMap />
-                            Career Roadmap
+                            {t.dashboard.careerRoadmap}
                         </a>
 
                         <a onClick={() => navigate("/interview")}>
                             <FiMessageSquare />
-                            Mock Interview
+                            {t.dashboard.mockInterview}
                         </a>
 
                         <a onClick={() => navigate("/profile")}>
                             <FiUser />
-                            Profile
+                            {t.dashboard.profile}
                         </a>
 
                         <a onClick={() => navigate("/settings")}>
                             <FiSettings />
-                            Settings
+                            {t.dashboard.settings}
                         </a>
 
                     </nav>
 
                     <button className="logout-btn" onClick={handleLogout}>
                         <FiLogOut />
-                        Logout
+                        {t.dashboard.logout}
                     </button>
 
                 </aside>
 
                 <main className="dashboard-content">
-
-                    <button
-                        className="mobile-menu-btn"
-                        onClick={() => setSidebarOpen(true)}
-                        title="Open Menu"
-                    >
-                        <FiMenu />
-                    </button>
 
                     <button 
                         className="back-btn" 
@@ -224,15 +218,16 @@ function Dashboard() {
 
                         <div>
                             <p className="welcome-small">
-                                Good evening, {dashboardData?.name || "there"}👋
+                                {t.dashboard.goodEvening}, {dashboardData?.name || "there"}👋
                             </p>
 
                             <h1>
-                                Your AI Career Journey
+                                {t.dashboard.yourAICareerJourney}
                             </h1>
 
                             <p className="dashboard-subtitle">
-                                You're on your way to becoming an {dashboardData?.career_goal || "your target career"}.
+                                {t.dashboard.youAreOnYourWay}
+                                {dashboardData?.career_goal || t.dashboard.yourTargetCareer}.
                             </p>
 
                         </div>
@@ -292,7 +287,7 @@ function Dashboard() {
                                     Beginner
                                 </span>
                                 <span>
-                                    {dashboardData?.career_goal || "your target career"}
+                                    {dashboardData?.career_goal || t.dashboard.Career} {t.dashboard.journey}
                                 </span>
                             </div>
                         </div>
@@ -308,7 +303,7 @@ function Dashboard() {
 
                             <div>
                                 <span>
-                                    Resume Score
+                                    {t.dashboard.resumeScore}
                                 </span>
                                 <h2>
                                     {dashboardData
@@ -316,7 +311,7 @@ function Dashboard() {
                                         : "--"}
                                 </h2>
                                 <small>
-                                    Good Profile
+                                    {t.dashboard.goodProfile}
                                 </small>
 
                             </div>
@@ -331,7 +326,7 @@ function Dashboard() {
                             <div>
 
                                 <span>
-                                    Career Goal
+                                    {t.dashboard.careerGoal}
                                 </span>
                                 <h2>
                                     {dashboardData
@@ -339,7 +334,7 @@ function Dashboard() {
                                         : "--"}
                                 </h2>
                                 <small>
-                                    Your target role
+                                    {t.dashboard.yourTargetRole}
                                 </small>
 
                             </div>
@@ -353,7 +348,7 @@ function Dashboard() {
 
                             <div>
                                 <span>
-                                    Skill Mastered
+                                    {t.dashboard.skillMastered}
                                 </span>
                                 <h2>
                                     {dashboardData
@@ -361,7 +356,7 @@ function Dashboard() {
                                         : "--"}
                                 </h2>
                                 <small>
-                                    Skills completed
+                                    {t.dashboard.skillsCompleted}
                                 </small>
 
                             </div>
@@ -377,16 +372,16 @@ function Dashboard() {
                             animate={{ opacity: 1, y: 0 }}
                         >
                             <div className="ai-focus-badge">
-                                ✨ AI FOCUS
+                                ✨ {t.dashboard.aiFocus}
                             </div>
                             <h2>
                                 {dashboardData
                                     ? dashboardData.current_focus
-                                    : "Analyzing your profile..."}
+                                    : t.dashboard.analyzingProfile}
                             </h2>
                             <p>
                                 Continue working on this area to move
-                                closer to your {dashboardData?.career_goal || "career"} goal.
+                                closer to your {dashboardData?.career_goal || t.dashboard.career} goal.
                             </p>
 
                             <div className="focus-meta">
@@ -394,12 +389,12 @@ function Dashboard() {
                                     ⏱ 45 min
                                 </span>
                                 <span>
-                                    🎯 High Priority
+                                    🎯 {t.dashboard.highPriority}
                                 </span>
                             </div>
 
                             <button className="focus-btn">
-                                Continue Learning →
+                                {t.dashboard.continueLearning}
                             </button>
                         </motion.div>
 
@@ -411,11 +406,11 @@ function Dashboard() {
                             <div className="card-header">
                                 <div>
                                     <h2>
-                                        AI Career Roadmap
+                                        {t.dashboard.aiCareerRoadmap}
                                     </h2>
                                     <p>
                                         Your journey toward becoming an{" "}
-                                        {dashboardData?.career_goal || "your career goal"}
+                                        {dashboardData?.career_goal || t.dashboard.yourCareerGoal}
                                     </p>
                                 </div>
 
@@ -456,10 +451,10 @@ function Dashboard() {
 
                                                     <p>
                                                         {stage.status === "completed"
-                                                            ? "Completed"
+                                                            ? t.dashboard.completed
                                                             : stage.status === "current"
-                                                                ? "Currently learning"
-                                                                : "Upcoming"}
+                                                                ? t.dashboard.currentlyLearning
+                                                                : t.dashboard.upcoming}
                                                     </p>
                                                 </div>
                                             </div>
@@ -477,32 +472,32 @@ function Dashboard() {
                         onClick={() => navigate("/dashboard")}
                     >
                         <FiTarget />
-                        <span>Home</span>
+                        <span>{t.dashboard.home}</span>
                     </a>
 
                     <a onClick={() => navigate("/resume")}>
                         <FiFileText />
-                        <span>Resume</span>
+                        <span>{t.dashboard.resume}</span>
                     </a>
 
                     <a onClick={() => navigate("/roadmap")}>
                         <FiMap />
-                        <span>Roadmap</span>
+                        <span>{t.dashboard.roadmap}</span>
                     </a>
 
                     <a onClick={() => navigate("/interview")}>
                         <FiMessageSquare />
-                        <span>Interview</span>
+                        <span>{t.dashboard.interview}</span>
                     </a>
 
                     <a onClick={() => navigate("/profile")}>
                         <FiUser />
-                        <span>Profile</span>
+                        <span>{t.dashboard.profile}</span>
                     </a>
 
                     <a onClick={() => navigate("/settings")}>
                         <FiSettings />
-                        <span>Settings</span>
+                        <span>{t.dashboard.settings}</span>
                     </a>
 
                 </nav>
