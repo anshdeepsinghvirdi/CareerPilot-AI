@@ -42,6 +42,15 @@ function Dashboard() {
         navigate("/login");
     };
 
+    const hour = new Date().getHours();
+
+    const greeting =
+        hour < 12
+            ? "Good morning"
+            : hour < 17
+            ? "Good afternoon"
+            : "Good evening";
+
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -218,7 +227,7 @@ function Dashboard() {
 
                         <div>
                             <p className="welcome-small">
-                                {t.dashboard.goodEvening}, {dashboardData?.name || "there"}👋
+                                {greeting}, {dashboardData?.name || "there"}👋
                             </p>
 
                             <h1>

@@ -65,8 +65,8 @@
 
 .back-btn {
     position: absolute;
-    top: 22px;
-    left: 45px;
+    top: 16px;
+    left: 18px;
 
     width: 42px;
     height: 42px;
@@ -102,7 +102,7 @@
 }
 
 .back-btn:hover {
-    transform: translateY(-3px) scale(1.05);
+    transform: translateY(-8px) scale(1.05);
 
     background: linear-gradient(
         135deg,
@@ -243,23 +243,25 @@
     justify-content: space-between;
     align-items: center;
 
-    padding-top: 35px;
+    padding-top: 8px;
 
     margin-bottom: 35px;
 }
 
+
 .welcome-small {
     color: #60a5fa;
-
-    margin: 0 0 6px;
-
-    font-size: 14px;
-    font-weight: 600;
+    position: relative;
+    transform: none;
+    margin-top: 38px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
+
 
 .dashboard-header h1 {
     margin: 0;
-
+    position: relative;
     font-size: 34px;
 
     letter-spacing: -1px;
@@ -2005,5 +2007,22 @@
     .privacy-container p,
     .privacy-container li {
         font-size: 14px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding-top: 42px;
+        align-items: flex-start;
+    }
+
+    .dashboard-header > div:first-child {
+        min-width: 0;
+    }
+
+    .welcome-small {
+        margin-top: 0;
+        margin-bottom: 8px;
     }
 }
