@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import API from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 import AnimatedBackground from "../components/AnimatedBackground";
@@ -104,8 +104,31 @@ function Login() {
     const navigate = useNavigate();
     const { t } = useLanguage();
 
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [loginProgress, setLoginProgress] = useState(0);
+
+    useEffect(() => {
+        if (!isLoggingIn) return;
+
+        const timer = setInterval(() => {
+            setLoginProgress((previous) => {
+                if (previous >= 95) return 95;
+
+                return Math.min(
+                    previous + (previous < 60 ? 5 : previous < 85 ? 2 : 1),
+                    95
+                );
+            });
+        }, 700);
+
+        return () => clearInterval(timer);
+    }, [isLoggingIn]);
+
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        setIsLoggingIn(true);
+        setLoginProgress(5);
 
         try {
             const formData = new URLSearchParams();
@@ -123,6 +146,8 @@ function Login() {
                     },
                 }
             );
+
+            setLoginProgress(100);
 
             localStorage.setItem(
                 "token",
@@ -157,6 +182,8 @@ function Login() {
             }, 1000);
 
         } catch (error) {
+            setIsLoggingIn(false);
+            setLoginProgress(0);
             toast.error(t.login.invalid);
         }
     };
@@ -166,6 +193,26 @@ function Login() {
             <AnimatedBackground />
 
             <Toaster position="top-right" />
+
+            {isLoggingIn && (
+                <div className="auth-progress-toast" role="status" aria-live="polite">
+                    <div className="auth-progress-heading">
+                        <span>Logging in…</span>
+                        <strong>{loginProgress}%</strong>
+                    </div>
+
+                    <div className="auth-progress-track">
+                        <div
+                            className="auth-progress-fill"
+                            style={{ width: `${loginProgress}%` }}
+                        />
+                    </div>
+
+                    <p>
+                        This may take longer depending on your internet connection.
+                    </p>
+                </div>
+            )}
 
             <div className="login-page">
 

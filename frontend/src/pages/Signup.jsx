@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../services/api";
 import { motion } from "framer-motion";
@@ -25,6 +25,24 @@ function Signup() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [signupProgress, setSignupProgress] = useState(0);
+    useEffect(() => {
+        if (!loading) return;
+
+        const timer = setInterval(() => {
+            setSignupProgress((previous) => {
+                if (previous >= 95) return 95;
+
+                return Math.min(
+                    previous + (previous < 60 ? 5 : previous < 85 ? 2 : 1),
+                    95
+                );
+            });
+        }, 700);
+
+        return () => clearInterval(timer);
+    }, [loading]);
+
     const { t } = useLanguage();
 
     const navigate = useNavigate();
@@ -50,6 +68,7 @@ function Signup() {
 
         try {
             setLoading(true);
+            setSignupProgress(5);
 
             console.log("Sending signup request...");
 
@@ -58,6 +77,8 @@ function Signup() {
                 email: email,
                 password: password,
             });
+
+            setSignupProgress(100);
 
             console.log("Signup Success:", response.data);
 
@@ -89,6 +110,7 @@ function Signup() {
 
         } finally {
             setLoading(false);
+            setSignupProgress(0);
         }
     };
 
@@ -98,6 +120,30 @@ function Signup() {
             <AnimatedBackground />
 
             <Toaster position="top-right" />
+
+            {loading && (
+                <div
+                    className="auth-progress-toast"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <div className="auth-progress-heading">
+                        <span>Creating account…</span>
+                        <strong>{signupProgress}%</strong>
+                    </div>
+
+                    <div className="auth-progress-track">
+                        <div
+                            className="auth-progress-fill"
+                            style={{ width: `${signupProgress}%` }}
+                        />
+                    </div>
+
+                    <p>
+                        This may take longer depending on your internet connection.
+                    </p>
+                </div>
+            )}
 
             <div className="login-page">
 
