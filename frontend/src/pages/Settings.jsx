@@ -9,6 +9,7 @@ import {
     FiFileText,
     FiGlobe,
     FiCheck,
+    FiInfo,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
@@ -318,7 +319,47 @@ function Settings() {
                                 {th.view}
                             </button>
 
+
+
                         </div>
+
+                        
+                    {/* ABOUT NIHALNOVA */}
+
+                    <div className="settings-section nihalnova-about-section">
+
+                        <div className="settings-section-title">
+                            <FiInfo />
+
+                            <div>
+                                <h2>About NihalNova</h2>
+                                <p>Meet the team behind the technology</p>
+                            </div>
+                        </div>
+
+                        <div className="settings-item nihalnova-about-item">
+
+                            <div className="settings-item-icon nihalnova-about-icon">
+                                <span>✦</span>
+                            </div>
+
+                            <div className="settings-item-content">
+                                <h3>NihalNova</h3>
+
+                                <p>
+                                    Building innovative digital experiences
+                                    powered by technology and AI.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div className="nihalnova-about-copyright">
+                            © 2026 NihalNova. All rights reserved.
+                        </div>
+
+                    </div>
+
 
                     </div>
 

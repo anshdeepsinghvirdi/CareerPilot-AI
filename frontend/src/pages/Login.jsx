@@ -245,6 +245,7 @@ function Login() {
                         </button>
                     </form>
 
+                    
                     <div className="bottom-links">
                         <Link to="/forgot-password">
                             {t.login.forgotPassword}
@@ -254,6 +255,11 @@ function Login() {
                             {t.login.createAccount}
                         </Link>
                     </div>
+
+                    <div className="nihalnova-branding">
+                        <span>Powered by NihalNova</span>
+                    </div>
+
                 </motion.div>
             </div>
         </>

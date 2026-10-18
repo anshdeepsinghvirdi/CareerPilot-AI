@@ -223,6 +223,7 @@ function Signup() {
 
                     </form>
 
+                    
                     <div className="bottom-links">
 
                         <span>
@@ -234,6 +235,11 @@ function Signup() {
                         </Link>
 
                     </div>
+
+                    <div className="nihalnova-branding">
+                        <span>Powered by NihalNova</span>
+                    </div>
+
 
                 </motion.div>
 
