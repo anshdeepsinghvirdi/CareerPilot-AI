@@ -477,37 +477,64 @@ IMPORTANT:
 def evaluate_answer(role: str, question: str, answer: str):
 
     prompt = f"""
-You are an expert interviewer for ANY profession.
+You are an expert interviewer and career coach for ANY profession.
 
 Target Role:
 {role}
 
-Question:
+Interview Question:
 {question}
 
-Candidate Answer:
+Candidate's Answer:
 {answer}
 
-Evaluate the answer specifically according to the requirements
-of the selected role.
+Evaluate the candidate's answer according to the selected role.
+Be fair, constructive, specific, and professional.
 
-Do NOT assume every role is technical.
+The candidate may belong to ANY profession.
+Do not assume every role is related to AI, programming, or software.
 
-Return exactly:
+STRICT OUTPUT FORMAT:
 
-Score: __/10
+Score: X/10
 
 Strengths:
-- ...
+- First specific strength.
+- Second specific strength.
+- Third specific strength, if applicable.
 
 Areas to Improve:
-- ...
+- First specific improvement.
+- Second specific improvement.
+- Third specific improvement, if applicable.
 
 Better Answer:
-...
+Write a complete, natural, professional example answer in a
+separate paragraph. Make it suitable for the selected role.
+Do not use bullet points in this section.
 
 Next Question:
-...
+Write exactly ONE new interview question relevant to the selected role.
+
+IMPORTANT RULES:
+
+1. Give a score from 0 to 10 based on the actual answer.
+2. Do not award a high score without sufficient evidence.
+3. List each strength as a separate bullet point.
+4. List each improvement as a separate bullet point.
+5. Each bullet must contain one clear, specific idea.
+6. Do not combine multiple points into a single paragraph.
+7. Do not write the Strengths or Areas to Improve as paragraphs.
+8. Keep the feedback concise, useful, and easy to scan.
+9. If there are no meaningful strengths, provide one constructive point.
+10. Suggest improvements relevant to the selected profession.
+11. The Better Answer must address the original question directly.
+12. The Better Answer should improve on the candidate's response
+    without inventing personal experience or qualifications.
+13. Do not include markdown headings, introductory commentary,
+    or explanations outside the exact format above.
+14. Always include all five sections.
+15. Return plain text, not JSON.
 """
 
     try:
