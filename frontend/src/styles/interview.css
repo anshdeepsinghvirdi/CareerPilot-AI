@@ -916,3 +916,145 @@
         padding: 22px;
     }
 }
+
+.evaluation-score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid rgba(120, 140, 255, 0.3);
+    border-radius: 16px;
+    background: rgba(120, 140, 255, 0.1);
+}
+
+.evaluation-score > span {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.evaluation-score strong {
+    font-size: 34px;
+    line-height: 1;
+    color: #8b9cff;
+}
+
+.evaluation-score small {
+    margin-left: 4px;
+    font-size: 15px;
+    color: #aab2c8;
+}
+
+.evaluation-section {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.evaluation-section h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.evaluation-section p {
+    margin: 0;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: inherit;
+}
+
+@media (max-width: 600px) {
+    .evaluation-score {
+        padding: 16px;
+    }
+
+    .evaluation-score strong {
+        font-size: 29px;
+    }
+
+    .evaluation-section {
+        padding: 14px;
+    }
+}
+
+/* Side-by-side interview feedback */
+.evaluation-feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 20px;
+}
+
+/* Feedback cards */
+.evaluation-section {
+    min-width: 0;
+    margin-top: 0;
+    padding: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+/* Bigger, bolder headings */
+.evaluation-section h4 {
+    margin: 0 0 14px;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.2px;
+}
+
+.strengths-section h4 {
+    color: #70e1a1;
+}
+
+.improvements-section h4 {
+    color: #ffbd75;
+}
+
+.better-answer-section h4 {
+    color: #91a6ff;
+}
+
+.evaluation-section p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: inherit;
+}
+
+/* Better answer below both cards */
+.better-answer-section {
+    margin-top: 20px;
+    padding: 24px;
+    border-color: rgba(145, 166, 255, 0.25);
+    background: rgba(100, 120, 255, 0.07);
+}
+
+/* Responsive layout for phones */
+@media (max-width: 650px) {
+    .evaluation-feedback-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .evaluation-section {
+        padding: 18px;
+    }
+
+    .evaluation-section h4 {
+        font-size: 18px;
+    }
+
+    .better-answer-section {
+        margin-top: 14px;
+    }
+}

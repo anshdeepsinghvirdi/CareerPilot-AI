@@ -13,6 +13,7 @@ import {
     FiMessageSquare,
     FiCheckCircle,
 } from "react-icons/fi";
+import { useMemo } from "react";
 import AnimatedBackground from "../components/AnimatedBackground";
 import API from "../services/api";
 import "../styles/interview.css";
@@ -373,7 +374,9 @@ function Interview() {
                 }
             );
 
-            setEvaluation(response.data.evaluation);
+            const evaluationText = response.data.evaluation || "";
+
+            setEvaluation(evaluationText);
 
             setQuestion(response.data.next_question);
 
@@ -388,6 +391,52 @@ function Interview() {
             setEvaluating(false);
         }
     };
+
+    const parsedEvaluation = useMemo(() => {
+        if (!evaluation) return null;
+
+        const scoreMatch = evaluation.match(
+            /Score:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i
+        );
+
+        const getSection = (start, endPatterns) => {
+            const startIndex = evaluation.search(start);
+
+            if (startIndex === -1) return "";
+
+            const contentStart = startIndex + evaluation.match(start)[0].length;
+            const remaining = evaluation.slice(contentStart);
+
+            const endRegex = new RegExp(
+                endPatterns.join("|"),
+                "i"
+            );
+
+            const endMatch = endRegex.exec(remaining);
+
+            return (
+                endMatch
+                    ? remaining.slice(0, endMatch.index)
+                    : remaining
+            ).trim().replace(/^-+\s*/gm, "").trim();
+        };
+
+        return {
+            score: scoreMatch ? Number(scoreMatch[1]) : null,
+            strengths: getSection(
+                /Strengths\s*:/i,
+                ["Areas to Improve\\s*:", "Better Answer\\s*:", "Next Question\\s*:"]
+            ),
+            improvements: getSection(
+                /Areas to Improve\s*:/i,
+                ["Better Answer\\s*:", "Next Question\\s*:"]
+            ),
+            betterAnswer: getSection(
+                /Better Answer\s*:/i,
+                ["Next Question\\s*:"]
+            )
+        };
+    }, [evaluation]);
 
     return (
         <>
@@ -602,9 +651,40 @@ function Interview() {
 
 
                         <div className="feedback-content">
+                            {parsedEvaluation?.score !== null &&
+                                parsedEvaluation?.score !== undefined && (
+                                    <div className="evaluation-score">
+                                        <span>Interview Score</span>
+                                        <strong>
+                                            {parsedEvaluation.score}
+                                            <small>/10</small>
+                                        </strong>
+                                    </div>
+                                )}
 
-                            {evaluation}
+                            <div className="evaluation-feedback-grid">
+                                {parsedEvaluation?.strengths && (
+                                    <section className="evaluation-section strengths-section">
+                                        <h4>Strengths</h4>
+                                        <p>{parsedEvaluation.strengths}</p>
+                                    </section>
+                                )}
 
+                                {parsedEvaluation?.improvements && (
+                                    <section className="evaluation-section improvements-section">
+                                        <h4>Areas to Improve</h4>
+                                        <p>{parsedEvaluation.improvements}</p>
+                                    </section>
+                                )}
+                            </div>
+
+                            {parsedEvaluation?.betterAnswer && (
+                                <section className="evaluation-section better-answer-section">
+                                    <h4>Example of a Better Answer</h4>
+                                    <p>{parsedEvaluation.betterAnswer}</p>
+                                </section>
+                            )}
+                            
                         </div>
 
                     </motion.div>
