@@ -247,6 +247,8 @@ export const sendAndroidNotification = async (
 
                     channelId:
                         NOTIFICATION_CHANNEL_ID,
+                    
+                    smallIcon: "ic_stat_careerpilot",
 
                     schedule: {
 
@@ -482,6 +484,8 @@ const scheduleAndroidReminders = async (
                         channelId:
                             NOTIFICATION_CHANNEL_ID,
 
+                        smallIcon: "ic_stat_careerpilot",
+
                         schedule: {
 
                             at:
@@ -513,6 +517,8 @@ const scheduleAndroidReminders = async (
 
                         channelId:
                             NOTIFICATION_CHANNEL_ID,
+                        
+                        smallIcon: "ic_stat_careerpilot",
 
                         schedule: {
 
